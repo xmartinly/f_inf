@@ -85,7 +85,6 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       useUserStoreHook()
         .loginByUsername({ email: ruleForm.email, password: ruleForm.password })
         .then(res => {
-          // console.log(res);
           if (res.code == 200) {
             setToken({
               email: ruleForm.email,

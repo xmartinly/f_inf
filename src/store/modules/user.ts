@@ -14,7 +14,7 @@ import {
   refreshTokenApi
 } from "@/api/user";
 import { useMultiTagsStoreHook } from "./multiTags";
-import { type DataInfo, setToken, removeToken, userKey } from "@/utils/auth";
+import { type DataInfo, removeToken, userKey } from "@/utils/auth";
 
 export const useUserStore = defineStore({
   id: "pure-user",
@@ -63,8 +63,13 @@ export const useUserStore = defineStore({
       return new Promise<UserResult>((resolve, reject) => {
         getLogin(data)
           .then(data => {
-            if (data?.success) setToken(data.data);
-            resolve(data);
+            if (data.code == 200) {
+              resolve(data);
+              // let token: DataInfo<now>;
+              // token.accessToken = data.accessToken;
+              console.log(data);
+            }
+            // setToken(data.data);
           })
           .catch(error => {
             reject(error);
@@ -86,8 +91,7 @@ export const useUserStore = defineStore({
       return new Promise<RefreshTokenResult>((resolve, reject) => {
         refreshTokenApi(data)
           .then(data => {
-            if (data) {
-              setToken(data.data);
+            if (data.code == 200) {
               resolve(data);
             }
           })

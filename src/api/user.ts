@@ -2,6 +2,7 @@ import { http } from "@/utils/http";
 import { baseUrlApi } from "./utils";
 
 export type UserResult = {
+  code: number;
   status: string;
   success: boolean;
   data: {
@@ -23,6 +24,7 @@ export type UserResult = {
 };
 
 export type RefreshTokenResult = {
+  code: number;
   success: boolean;
   data: {
     /** `token` */
