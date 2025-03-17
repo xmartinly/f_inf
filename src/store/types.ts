@@ -39,6 +39,7 @@ export type setType = {
 export type userType = {
   email: string;
   username?: string;
+  region: string;
   roles?: Array<string>;
   permissions?: Array<string>;
   isRemembered?: boolean;

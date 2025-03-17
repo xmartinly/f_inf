@@ -7,7 +7,8 @@ import { useNav } from "@/layout/hooks/useNav";
 import type { FormInstance } from "element-plus";
 import { useLayout } from "@/layout/hooks/useLayout";
 import { useUserStoreHook } from "@/store/modules/user";
-// import { initRouter, getTopMenu } from "@/router/utils";
+import { getInfo } from "@/api/user";
+
 import { bg, avatar, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
 import { ref, reactive, toRaw, onMounted, onBeforeUnmount } from "vue";
@@ -41,44 +42,8 @@ const ruleForm = reactive({
   password: "3Diabloly1"
 });
 
-// const onLogin = async (formEl: FormInstance | undefined) => {
-//   if (!formEl) return;
-//   await formEl.validate((valid, fields) => {
-//     if (valid) {
-//       loading.value = true;
-//       useUserStoreHook()
-//         .loginByUsername({ username: ruleForm.username, password: "admin123" })
-//         .then(res => {
-//           if (res.success) {
-//             // 获取后端路由
-//             return initRouter().then(() => {
-//               router.push(getTopMenu(true).path).then(() => {
-//                 message("登录成功", { type: "success" });
-//               });
-//             });
-//           } else {
-//             message("登录失败", { type: "error" });
-//           }
-//         })
-//         .finally(() => (loading.value = false));
-//     }
-//   });
-// };
 const onLogin = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  // await formEl.validate(valid => {
-  //   if (valid) {
-  //     loading.value = true;
-  //     setToken({
-  //       email: "778567144@qq.com",
-  //       username: "admin",
-  //       roles: ["admin"],
-  //       accessToken: "eyJhbGciOiJIUzUxMiJ9.admin"
-  //     } as any);
-  //     // 全部采取静态路由模式
-
-  //   }
-  // });
   await formEl.validate((valid, fields) => {
     if (valid) {
       loading.value = true;
@@ -87,11 +52,17 @@ const onLogin = async (formEl: FormInstance | undefined) => {
         .then(res => {
           if (res.code == 200) {
             setToken({
-              email: ruleForm.email,
-              username: "admin",
-              roles: ["admin"],
               accessToken: res.data.accessToken
             } as any);
+            getInfo().then(res => {
+              if (res.code == 200) {
+                // setToken(res as any);
+                useUserStoreHook().SET_USERNAME(res.data.username);
+                useUserStoreHook().SET_EMAIL(res.data.email);
+                useUserStoreHook().SET_ROLES(res.data.roles);
+                useUserStoreHook().SET_REGION(res.data.region);
+              }
+            });
 
             usePermissionStoreHook().handleWholeMenus([]);
             addPathMatch();

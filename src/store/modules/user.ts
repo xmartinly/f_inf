@@ -17,7 +17,7 @@ import { useMultiTagsStoreHook } from "./multiTags";
 import { type DataInfo, removeToken, userKey } from "@/utils/auth";
 
 export const useUserStore = defineStore({
-  id: "pure-user",
+  id: "infcd-user",
   state: (): userType => ({
     // 用户名
     username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
@@ -25,6 +25,8 @@ export const useUserStore = defineStore({
     email: storageLocal().getItem<DataInfo<number>>(userKey)?.email ?? "",
     // 页面级别权限
     roles: storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [],
+    // 用户地区
+    region: storageLocal().getItem<DataInfo<number>>(userKey)?.region ?? "",
     // 按钮级别权限
     permissions:
       storageLocal().getItem<DataInfo<number>>(userKey)?.permissions ?? [],
@@ -58,6 +60,10 @@ export const useUserStore = defineStore({
     SET_LOGINDAY(value: number) {
       this.loginDay = Number(value);
     },
+    /** 设置登录页的免登录存储几天 */
+    SET_REGION(region: string) {
+      this.region = region;
+    },
     /** 登入 */
     async loginByUsername(data) {
       return new Promise<UserResult>((resolve, reject) => {
@@ -65,8 +71,6 @@ export const useUserStore = defineStore({
           .then(data => {
             if (data.code == 200) {
               resolve(data);
-              // let token: DataInfo<now>;
-              // token.accessToken = data.accessToken;
               console.log(data);
             }
             // setToken(data.data);

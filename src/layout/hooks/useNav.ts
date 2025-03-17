@@ -10,7 +10,7 @@ import { router, remainingPaths } from "@/router";
 import { computed, type CSSProperties } from "vue";
 import { useAppStoreHook } from "@/store/modules/app";
 import { useUserStoreHook } from "@/store/modules/user";
-import { useGlobal, isAllEmpty } from "@pureadmin/utils";
+import { useGlobal } from "@pureadmin/utils";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import ExitFullscreen from "@iconify-icons/ri/fullscreen-exit-fill";
 import Fullscreen from "@iconify-icons/ri/fullscreen-fill";
@@ -37,24 +37,7 @@ export function useNav() {
     };
   });
 
-  /** 头像（如果头像为空则使用 src/assets/user.jpg ） */
-  // const userAvatar = computed(() => {
-  //   return isAllEmpty(useUserStoreHook()?.avatar)
-  //     ? Avatar
-  //     : useUserStoreHook()?.avatar;
-  // });
-
-  // /** 昵称（如果昵称为空则显示用户名） */
-  // const username = computed(() => {
-  //   return isAllEmpty(useUserStoreHook()?.nickname)
-  //     ? useUserStoreHook()?.username
-  //     : useUserStoreHook()?.nickname;
-  // });
-
-  // const avatarsStyle = computed(() => {
-  //   return username.value ? { marginRight: "10px" } : "";
-  // });
-
+  /** 邮箱 */
   const useremail = computed(() => {
     return useUserStoreHook()?.email;
   });
@@ -153,9 +136,6 @@ export function useNav() {
     getLogo,
     isCollapse,
     pureApp,
-    // username,
-    // userAvatar,
-    // avatarsStyle,
     useremail,
     tooltipEffect
   };

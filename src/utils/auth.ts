@@ -17,6 +17,8 @@ export interface DataInfo<T> {
   email?: string;
   /** 当前登录用户的角色 */
   roles?: Array<string>;
+  /**  */
+  region: string;
   /** 当前登录用户的按钮级别权限 */
   permissions?: Array<string>;
 }
@@ -68,10 +70,11 @@ export function setToken(data: DataInfo<Date>) {
       : {}
   );
 
-  function setUserKey({ email, username, roles, permissions }) {
+  function setUserKey({ email, username, roles, permissions, region }) {
     useUserStoreHook().SET_USERNAME(username);
     useUserStoreHook().SET_EMAIL(email);
     useUserStoreHook().SET_ROLES(roles);
+    useUserStoreHook().SET_REGION(region);
     useUserStoreHook().SET_PERMS(permissions);
     storageLocal().setItem(userKey, {
       refreshToken,
@@ -79,16 +82,18 @@ export function setToken(data: DataInfo<Date>) {
       email,
       username,
       roles,
+      region,
       permissions
     });
   }
 
   if (data.username && data.roles) {
-    const { username, roles, email } = data;
+    const { username, roles, email, region } = data;
     setUserKey({
       username,
       email,
       roles,
+      region,
       permissions: data?.permissions ?? []
     });
   } else {
@@ -98,10 +103,13 @@ export function setToken(data: DataInfo<Date>) {
       storageLocal().getItem<DataInfo<number>>(userKey)?.email ?? "";
     const roles =
       storageLocal().getItem<DataInfo<number>>(userKey)?.roles ?? [];
+    const region =
+      storageLocal().getItem<DataInfo<number>>(userKey)?.region ?? "";
     const permissions =
       storageLocal().getItem<DataInfo<number>>(userKey)?.permissions ?? [];
     setUserKey({
       email,
+      region,
       username,
       roles,
       permissions
