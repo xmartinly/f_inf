@@ -1,12 +1,15 @@
 <script setup lang="ts">
+defineOptions({
+  name: "Welcome"
+});
 import { Plus, Search } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import { AppRequest } from "@/api/record";
 import {
   type ProductData,
   type CustomerData,
-  type ContactData,
-  AppRequest
-} from "@/api/record";
+  type ContactData
+} from "@/api/utils";
 import { searchTypeOptions } from "@/utils/options";
 import { ref } from "vue";
 import { LogTable } from "@/components/LogTable";

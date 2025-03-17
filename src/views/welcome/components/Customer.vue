@@ -1,55 +1,6 @@
-<template>
-  <el-dialog
-    :modelValue="modelValue"
-    draggable
-    center
-    :title="dialogTitle"
-    width="30%"
-    :close-on-click-modal="false"
-    @close="handleClose"
-    @update:modelValue="handleDialogVisibleChange"
-  >
-    <el-form :model="form" label-width="80px">
-      <el-form-item label="SAP No.">
-        <el-input v-model="form.sap_no" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="中文名">
-        <el-input v-model="form.name_chs" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="英文名">
-        <el-input v-model="form.name_eng" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="文件号">
-        <el-input v-model="form.file_no" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="地区">
-        <el-input v-model="form.locate" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="类别">
-        <el-select v-model="form.group" :disabled="isReadOnly">
-          <el-option
-            v-for="item in customerGroupOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button v-if="!isReadOnly" type="primary" @click="handleSubmit"
-          >提交</el-button
-        >
-      </div>
-    </template>
-  </el-dialog>
-</template>
-
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
-import { type CustomerData } from "@/api/record";
+import { type CustomerData } from "@/api/utils";
 import { customerGroupOptions } from "@/utils/options";
 
 interface Customer extends CustomerData {}
@@ -116,3 +67,52 @@ const handleSubmit = () => {
   handleClose(); // 关闭对话框
 };
 </script>
+
+<template>
+  <el-dialog
+    :modelValue="modelValue"
+    draggable
+    center
+    :title="dialogTitle"
+    width="30%"
+    :close-on-click-modal="false"
+    @close="handleClose"
+    @update:modelValue="handleDialogVisibleChange"
+  >
+    <el-form :model="form" label-width="80px">
+      <el-form-item label="SAP No.">
+        <el-input v-model="form.sap_no" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="中文名">
+        <el-input v-model="form.name_chs" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="英文名">
+        <el-input v-model="form.name_eng" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="文件号">
+        <el-input v-model="form.file_no" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="地区">
+        <el-input v-model="form.locate" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="类别">
+        <el-select v-model="form.group" :disabled="isReadOnly">
+          <el-option
+            v-for="item in customerGroupOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="handleClose">取消</el-button>
+        <el-button v-if="!isReadOnly" type="primary" @click="handleSubmit"
+          >提交</el-button
+        >
+      </div>
+    </template>
+  </el-dialog>
+</template>

@@ -1,19 +1,8 @@
-/*
- * @Author: xmartinly 778567144@qq.com
- * @Date: 2024-01-15 00:02:23
- * @LastEditors: xmartinly 778567144@qq.com
- * @LastEditTime: 2024-05-10 12:35:48
- * @FilePath: \arj_f\src\utils\formatter.ts
- * @Description:
- *
- * Copyright (c) 2024 by xmartinly, All Rights Reserved.
- */
 /**
  * @description: 格式化钱
  * @param {number} money
  * @return {*}
  */
-import * as allOptions from "./options";
 import dayjs from "dayjs";
 
 export function fmtMoney(money: number) {
@@ -35,24 +24,6 @@ export const validId = (val: any) => {
     return false;
   }
   return id;
-};
-
-export const fmtDetailType = (type = 0) => {
-  const options = allOptions.detailOptions;
-  const lable = options.filter(x => x.value == type);
-  return lable[0].label;
-};
-
-export const fmtClientType = (row: any, column: any, cellValue: any) => {
-  const options = allOptions.clientOptions;
-  let text = cellValue;
-  const _idx = options.filter(
-    (x: any) => parseFloat(x.value) == parseFloat(cellValue)
-  );
-  if (_idx.length > 0) {
-    text = _idx[0].label;
-  }
-  return text;
 };
 
 /**

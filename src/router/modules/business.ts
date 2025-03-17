@@ -1,26 +1,26 @@
 export default {
   path: "/business",
+  redirect: "/business/index",
   meta: {
-    title: "业务",
-    icon: "material-symbols:business-center-outline-rounded"
+    icon: "material-symbols:business-center-outline-rounded",
+    title: "业务"
   },
   children: [
     {
-      path: "/business/quotation",
-      name: "Quotation",
-      component: () => import("@/views/business/quotation.vue"),
+      path: "/business/index",
+      name: "Business",
+      component: () => import("@/views/business/index.vue"),
       meta: {
-        title: "询价",
-        icon: "material-symbols:headset-mic-outline-rounded"
+        title: "业务"
       }
     },
     {
       path: "/business/contract",
       name: "Contract",
-      component: () => import("@/views/business/contract.vue"),
+      component: () => import("@/views/business/components/contract.vue"),
       meta: {
         title: "合同",
-        icon: "material-symbols:contract-edit-outline-rounded"
+        showLink: false
       }
     }
   ]

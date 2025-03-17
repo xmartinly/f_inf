@@ -1,11 +1,56 @@
 import { http } from "@/utils/http";
-import {
-  baseUrlApi,
-  type ProductData,
-  type CustomerData,
-  type ContactData,
-  type TableResult
-} from "./utils";
+import { baseUrlApi } from "./utils";
+
+// 定义表格结果类型
+export type TableResult = {
+  status: string;
+  code: number;
+  data: {
+    /** 表格数据 */
+    tableData: [];
+    /** 表格头 */
+    props: [];
+    /** 新建许可 */
+    $add_pers?: boolean;
+  };
+};
+
+// 定义产品数据类型
+export type ProductData = {
+  id?: number;
+  pn: string;
+  description: string;
+  list_price: number;
+  target_price: number;
+  limit_price: number;
+  p_year: number;
+  p_currency: string;
+  p_comment: string;
+  p_class: string;
+};
+
+// 定义客户数据类型
+export type CustomerData = {
+  //  导出CustomerData类型
+  id?: number;
+  sap_no: number;
+  name_chs: string;
+  name_eng: string;
+  file_no: string;
+  locate: string;
+  group: number;
+};
+
+// 定义联系人数据类型
+export type ContactData = {
+  //  导出ContactData类型
+  id?: number;
+  customer_id: number;
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+};
 
 // 导出AppRequest类
 export class AppRequest {

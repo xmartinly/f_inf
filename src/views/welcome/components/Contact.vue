@@ -1,54 +1,7 @@
-<template>
-  <el-dialog
-    :modelValue="modelValue"
-    draggable
-    center
-    :title="dialogTitle"
-    width="30%"
-    :close-on-click-modal="false"
-    @close="handleClose"
-    @update:modelValue="handleDialogVisibleChange"
-  >
-    <el-form :model="form" label-width="80px">
-      <el-form-item label="姓名">
-        <el-input v-model="form.name" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="电话">
-        <el-input v-model="form.phone" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="邮箱">
-        <el-input v-model.number="form.email" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="地址">
-        <el-input v-model.number="form.address" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="公司">
-        <el-autocomplete
-          v-model="form.customer_name"
-          clearable
-          :disabled="isReadOnly"
-          :fetch-suggestions="acCustomer"
-          value-key="name_chs"
-          :trigger-on-focus="false"
-          style="width: 100%"
-          @select="selCustomer"
-        />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button v-if="!isReadOnly" type="primary" @click="handleSubmit"
-          >提交</el-button
-        >
-      </div>
-    </template>
-  </el-dialog>
-</template>
-
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
-import { type ContactData, type CustomerData, AppRequest } from "@/api/record";
+import { AppRequest } from "@/api/record";
+import { type ContactData, type CustomerData } from "@/api/utils";
 
 interface Contact extends ContactData {
   customer_name?: string;
@@ -132,3 +85,51 @@ const selCustomer = (item: CustomerData) => {
   form.value.customer_id = item.id;
 };
 </script>
+
+<template>
+  <el-dialog
+    :modelValue="modelValue"
+    draggable
+    center
+    :title="dialogTitle"
+    width="30%"
+    :close-on-click-modal="false"
+    @close="handleClose"
+    @update:modelValue="handleDialogVisibleChange"
+  >
+    <el-form :model="form" label-width="80px">
+      <el-form-item label="姓名">
+        <el-input v-model="form.name" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="电话">
+        <el-input v-model="form.phone" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="邮箱">
+        <el-input v-model.number="form.email" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="地址">
+        <el-input v-model.number="form.address" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="公司">
+        <el-autocomplete
+          v-model="form.customer_name"
+          clearable
+          :disabled="isReadOnly"
+          :fetch-suggestions="acCustomer"
+          value-key="name_chs"
+          :trigger-on-focus="false"
+          style="width: 100%"
+          @select="selCustomer"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="handleClose">取消</el-button>
+        <el-button v-if="!isReadOnly" type="primary" @click="handleSubmit"
+          >提交</el-button
+        >
+      </div>
+    </template>
+  </el-dialog>
+</template>
