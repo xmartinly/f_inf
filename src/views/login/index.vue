@@ -7,7 +7,6 @@ import { useNav } from "@/layout/hooks/useNav";
 import type { FormInstance } from "element-plus";
 import { useLayout } from "@/layout/hooks/useLayout";
 import { useUserStoreHook } from "@/store/modules/user";
-import { getInfo } from "@/api/user";
 
 import { bg, avatar, illustration } from "./utils/static";
 import { useRenderIcon } from "@/components/ReIcon/src/hooks";
@@ -51,19 +50,7 @@ const onLogin = async (formEl: FormInstance | undefined) => {
         .loginByUsername({ email: ruleForm.email, password: ruleForm.password })
         .then(res => {
           if (res.code == 200) {
-            setToken({
-              accessToken: res.data.accessToken
-            } as any);
-            getInfo().then(res => {
-              if (res.code == 200) {
-                // setToken(res as any);
-                useUserStoreHook().SET_USERNAME(res.data.username);
-                useUserStoreHook().SET_EMAIL(res.data.email);
-                useUserStoreHook().SET_ROLES(res.data.roles);
-                useUserStoreHook().SET_REGION(res.data.region);
-              }
-            });
-
+            setToken(res.data as any);
             usePermissionStoreHook().handleWholeMenus([]);
             addPathMatch();
             router.push(getTopMenu(true).path);

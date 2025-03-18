@@ -3,7 +3,7 @@ defineOptions({
   name: "Welcome"
 });
 import { Plus, Search } from "@element-plus/icons-vue";
-import { ElMessage } from "element-plus";
+import { message as pureMessage } from "@/utils/message";
 import { AppRequest } from "@/api/record";
 import {
   type ProductData,
@@ -75,8 +75,8 @@ const recordRequest = (record: any, action: string) => {
       });
     return;
   }
-  _request.appRequest(action, record, record.id).then(({ data }) => {
-    ElMessage.success(data);
+  _request.appRequest(action, record, record.id).then(res => {
+    pureMessage(res.data, { type: res.status });
   });
 };
 

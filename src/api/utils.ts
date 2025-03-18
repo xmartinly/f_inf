@@ -101,3 +101,16 @@ export type OrderData = {
   other_terms?: string;
   comment?: string;
 };
+
+export type OrderItemData = {
+  id?: number;
+  order_id?: number;
+  contact_id?: number;
+  customer_id?: number;
+  pn: string;
+  description: string;
+  quantity: number;
+  disscount: number;
+  price_rounded: number;
+  amount: number;
+};

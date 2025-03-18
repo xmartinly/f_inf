@@ -39,6 +39,10 @@ export const fmtTimestamp = (time: string) => {
   return dayjs(time).clone().format("YYYY-MM-DD");
 };
 
+export const nowDate = () => {
+  return dayjs().format("YYYY-MM-DD");
+};
+
 /**
  * @description: 报销状态显示状态, 报销的显示删除
  * @param {*} rate
