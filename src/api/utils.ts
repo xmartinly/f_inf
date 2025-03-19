@@ -111,6 +111,7 @@ export type OrderItemData = {
   description: string;
   quantity: number;
   disscount: number;
+  list_price: number;
   price_rounded: number;
   amount: number;
 };
