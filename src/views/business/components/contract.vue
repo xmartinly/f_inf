@@ -113,20 +113,29 @@ const selProduct = (item: AcProduct, item_row: OrderItemData) => {
   item_row.amount =
     item_row.quantity * item_row.list_price * (item_row.discount / 100);
 };
+
 const selCustomer = (item: CustomerData) => {
-  console.log(item);
   form.value.cust_sap = item.sap_no + "";
   form.value.cust_name_eng = item.name_eng;
   form.value.cust_file_no = item.file_no;
   form.value.cust_locate = item.locate;
   form.value.cust_type = item.group;
   form.value.customer_id = item.id;
+  form.value.items.forEach(item_row => {
+    item_row.customer_id = item.id;
+  });
+  console.log(form.value.items);
 };
+
 const selContact = (item: ContactData) => {
   form.value.contact_id = item.id;
   form.value.cont_address = item.address;
   form.value.cont_email = item.email;
   form.value.cont_phone = item.phone;
+  form.value.items.forEach(item_row => {
+    item_row.contact_id = item.id;
+  });
+  console.log(form.value.items);
 };
 
 const selInput = (item: any, item_row: any, type: string) => {
