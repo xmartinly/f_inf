@@ -52,66 +52,65 @@ export type ContactData = {
   address: string;
 };
 
-// operator_name;
-// order_region;
-// cust_name;
-// cont_name;
-// cont_phone;
-// in_date;
-// status;
-// cust_locate;
-// leadtime_term;
-// end_user;
+// 定义订单数据类型
+export type OrderData = {
+  id: number;
+  in_date: string;
+  done_date: string;
 
-// order_no;
-// cust_sap;
-// cust_file_no;
-// cont_address;
-// cont_email;
-// done_date;
-// delivery_term;
-// payment_term;
-// other_terms;
-// comment;
-
-export type QuotationData = {
-  id?: number;
+  order_no: string;
   operator_name: string;
   order_region: string;
-  cust_name: string;
+
+  cust_sap: string;
+  cust_name_chs: string;
+  cust_name_eng: string;
   cust_locate: string;
+  cust_file_no: string;
+  cust_type: number;
+  customer_id?: number;
+
   end_user: string;
+
   cont_name: string;
   cont_phone: string;
-  in_date: Date;
-  status: number;
-  leadtime_term: Text;
-};
-
-export type OrderData = {
-  id?: number;
-  order_no?: string;
-  cust_sap?: string;
-  cust_file_no?: string;
-  cont_address?: string;
-  cont_email?: string;
-  done_date?: Date;
-  delivery_term?: string;
-  payment_term?: string;
-  other_terms?: string;
-  comment?: string;
-};
-
-export type OrderItemData = {
-  id?: number;
-  order_id?: number;
+  cont_email: string;
+  cont_address: string;
   contact_id?: number;
-  customer_id?: number;
+
+  origin_term: string;
+  leadtime_term: string;
+  shipment_term: string;
+  payment_term: string;
+  warranty_term: string;
+  claims_term: string;
+  other_term: string;
+  enduser_declaration_term: string;
+  misc_term: string;
+
+  status: number;
+  comment: string;
+
+  items?: OrderItemData[];
+  contact?: ContactData;
+  customer?: CustomerData;
+};
+
+// 定义订单项数据类型
+export type OrderItemData = {
+  id: number;
+
+  order_id: number;
+  contact_id: number;
+  customer_id: number;
+
   pn: string;
   description: string;
   quantity: number;
-  disscount: number;
-  list_price: number;
+  discount: number;
   price_rounded: number;
   amount: number;
+
+  list_price?: number;
+  limit_price?: number;
 };

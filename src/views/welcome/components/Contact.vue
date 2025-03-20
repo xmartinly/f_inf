@@ -81,7 +81,6 @@ const acCustomer = (key: string, cb: (arg: any) => void) => {
 };
 
 const selCustomer = (item: CustomerData) => {
-  console.log(item);
   form.value.customer_id = item.id;
 };
 </script>
