@@ -117,6 +117,7 @@ const selProduct = (item: AcProduct, item_row: OrderItemData) => {
 const selCustomer = (item: CustomerData) => {
   form.value.cust_sap = item.sap_no + "";
   form.value.cust_name_eng = item.name_eng;
+  form.value.cust_name_chs = item.name_chs;
   form.value.cust_file_no = item.file_no;
   form.value.cust_locate = item.locate;
   form.value.cust_type = item.group;
@@ -191,7 +192,7 @@ const calculateAmount = (item: OrderItemData) => {
                         acInput(queryString, cb, 'cust');
                       }
                     "
-                    value-key="value"
+                    value-key="name_chs"
                     :trigger-on-focus="false"
                     style="width: 100%"
                     class="autoc"
@@ -201,7 +202,7 @@ const calculateAmount = (item: OrderItemData) => {
                     "
                   >
                     <template #default="{ item }">
-                      <div>{{ item.value }}</div>
+                      <div>{{ item.name_chs }}</div>
                       <span class="ac_misc">{{ item.misc }}</span>
                     </template></el-autocomplete
                   >
