@@ -19,7 +19,7 @@ export class AppRequest {
     this.url = baseUrlApi(url);
   };
   // 定义公有方法appRequest，用于发送请求
-  public appRequest = (action: string, data?: any, id?: string) => {
+  public appRequest = (action: string, data?: any, id?: string | number) => {
     // 如果url为空，则抛出错误
     if (this.url.length === 0) throw new Error("url is empty");
     if (!this.record_actions.includes(action))
@@ -51,23 +51,23 @@ export class AppRequest {
   // 定义私有方法editRec，用于编辑记录
   private editRec = (
     data: ProductData | CustomerData | ContactData,
-    id: string
+    id: string | number
   ) => {
     // 使用http.request方法发送put请求，将data作为参数，并在url后拼接id
     return http.request<any>("put", this.url + "/" + id, { data });
   };
   // 定义私有方法delRec，用于删除记录
-  private delRec = (id?: string) => {
+  private delRec = (id?: string | number) => {
     // 使用http.request方法发送delete请求，并在url后拼接id
     return http.request<any>("delete", this.url + "/" + id);
   };
   // 定义私有方法searchRec，用于搜索记录
-  private searchRec = (params?: string) => {
+  private searchRec = (params?: string | number) => {
     // 使用http.request方法发送get请求，并在url后拼接params
     return http.request<TableResult>("get", this.url + "/meili/" + params);
   };
   // 定义私有方法acRec，用于自动完成记录
-  private acRec = (params: string) => {
+  private acRec = (params: string | number) => {
     // 使用http.request方法发送get请求，并在url后拼接params
     return http.request<any>("get", this.url + "/meili/ac/" + params);
   };

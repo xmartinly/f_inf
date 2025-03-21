@@ -90,6 +90,7 @@ export type OrderData = {
 
   status: number;
   comment: string;
+  bu_code: string;
 
   items?: OrderItemData[];
   contact?: ContactData;
@@ -98,9 +99,9 @@ export type OrderData = {
 
 // 定义订单项数据类型
 export type OrderItemData = {
-  id: number;
+  id?: number;
 
-  order_id: number;
+  order_id?: number;
   contact_id: number;
   customer_id: number;
 

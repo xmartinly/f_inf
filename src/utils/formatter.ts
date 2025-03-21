@@ -174,6 +174,7 @@ export const fmtContractTerms = [
 
   // 制造厂家及国别
   {
+    id: 1,
     idx: "origin_term",
     row: 1,
     label: "一、制造厂家及国别：",
@@ -181,6 +182,7 @@ export const fmtContractTerms = [
   },
   // 交货期
   {
+    id: 2,
     idx: "leadtime_term",
     row: 1,
     label: "二、交货期：",
@@ -188,6 +190,7 @@ export const fmtContractTerms = [
   },
   // 交货地点
   {
+    id: 3,
     idx: "shipment_term",
     row: 1,
     label: "三、交货地点：",
@@ -195,6 +198,7 @@ export const fmtContractTerms = [
   },
   // 付款与发票
   {
+    id: 4,
     idx: "payment_term",
     row: 1,
     label: "四、付款与发票：",
@@ -202,6 +206,7 @@ export const fmtContractTerms = [
   },
   // 质量保证
   {
+    id: 5,
     idx: "warranty_term",
     row: 3,
     label: "五、质量保证：",
@@ -209,6 +214,7 @@ export const fmtContractTerms = [
   },
   // 索赔
   {
+    id: 6,
     idx: "claims_term",
     row: 3,
     label: "六、索赔：",
@@ -216,6 +222,7 @@ export const fmtContractTerms = [
   },
   // 其他
   {
+    id: 7,
     idx: "other_term",
     row: 2,
     label: "七、其他：",
@@ -223,6 +230,7 @@ export const fmtContractTerms = [
   },
   // 货物的最终用户及用途声明
   {
+    id: 8,
     idx: "enduser_declaration_term",
     row: 8,
     label: "八、货物的最终用户及用途声明：",
@@ -230,6 +238,7 @@ export const fmtContractTerms = [
   },
   // 杂项
   {
+    id: 9,
     idx: "misc_term",
     row: 3,
     label: "九、",

@@ -11,7 +11,11 @@ import {
   itemHeader,
   fmtPriceTextStyle
 } from "@/utils/formatter";
-import { customerGroupOptions } from "@/utils/options";
+import {
+  customerGroupOptions,
+  statusOptions,
+  buCodeOptions
+} from "@/utils/options";
 import {
   type OrderItemData,
   type CustomerData,
@@ -19,9 +23,12 @@ import {
   type OrderData
 } from "@/api/utils";
 import { acInput } from "@/utils/autoc";
+import { AppRequest } from "@/api/record";
+import { message } from "@/utils/message";
 
 const labelWidth = ref(80);
 const readOnlyField = ref(false);
+const activeNames = ref([1, 2, 3, 4]);
 
 onMounted(() => {
   terms.forEach(item => {
@@ -42,8 +49,6 @@ interface AcProduct {
 }
 
 const item = ref<OrderItemData>({
-  id: 0,
-  order_id: 0,
   contact_id: 0,
   customer_id: 0,
   pn: "",
@@ -63,6 +68,7 @@ const form = ref<OrderData>({
   done_date: "",
 
   order_no: "",
+  bu_code: "VC",
   operator_name: user().username,
   order_region: user().region,
 
@@ -92,7 +98,7 @@ const form = ref<OrderData>({
   enduser_declaration_term: "",
   misc_term: "",
 
-  status: 0,
+  status: -1,
   comment: "",
   items: item_array.value,
   customer: {} as CustomerData,
@@ -122,10 +128,6 @@ const selCustomer = (item: CustomerData) => {
   form.value.cust_locate = item.locate;
   form.value.cust_type = item.group;
   form.value.customer_id = item.id;
-  form.value.items.forEach(item_row => {
-    item_row.customer_id = item.id;
-  });
-  console.log(form.value.items);
 };
 
 const selContact = (item: ContactData) => {
@@ -136,7 +138,6 @@ const selContact = (item: ContactData) => {
   form.value.items.forEach(item_row => {
     item_row.contact_id = item.id;
   });
-  console.log(form.value.items);
 };
 
 const selInput = (item: any, item_row: any, type: string) => {
@@ -165,8 +166,30 @@ const calculateAmount = (item: OrderItemData) => {
 
   // 保留两位小数（可选）
   item.price_rounded = parseFloat(rounded.toFixed(3));
-  console.log(item.price_rounded);
+
   item.amount = parseFloat(amount.toFixed(3));
+};
+
+const onSubmit = () => {
+  if (form.value.customer_id == 0 || form.value.contact_id == 0) {
+    message("请在输入用户和联系人后提交", { type: "error" });
+    return;
+  }
+
+  form.value.items.forEach(item_row => {
+    item_row.customer_id = form.value.customer_id;
+    item_row.contact_id = form.value.contact_id;
+  });
+  const _request = new AppRequest("order");
+  const order_id = form.value.id ? +"" : undefined;
+  let action = "update";
+
+  if (!order_id) {
+    action = "add";
+  }
+  _request.appRequest(action, form.value, order_id).then(({ data, status }) => {
+    message(data, { type: status });
+  });
 };
 </script>
 
@@ -202,17 +225,13 @@ const calculateAmount = (item: OrderItemData) => {
                     "
                   >
                     <template #default="{ item }">
-                      <div>{{ item.name_chs }}</div>
+                      <span>{{ item.name_chs }} <br /></span>
                       <span class="ac_misc">{{ item.misc }}</span>
-                    </template></el-autocomplete
-                  >
+                    </template>
+                  </el-autocomplete>
                 </el-form-item>
-
-                <el-form-item label="地区" :label-width="labelWidth">
-                  <el-input
-                    v-model="form.cust_locate"
-                    :readonly="readOnlyField"
-                  />
+                <el-form-item label="最终用户" :label-width="labelWidth">
+                  <el-input v-model="form.end_user" :readonly="readOnlyField" />
                 </el-form-item>
               </el-col>
               <el-col :span="12" :offset="0">
@@ -226,8 +245,12 @@ const calculateAmount = (item: OrderItemData) => {
                     />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="最终用户" :label-width="labelWidth">
-                  <el-input v-model="form.end_user" :readonly="readOnlyField" />
+
+                <el-form-item label="地区" :label-width="labelWidth">
+                  <el-input
+                    v-model="form.cust_locate"
+                    :readonly="readOnlyField"
+                  />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -285,14 +308,45 @@ const calculateAmount = (item: OrderItemData) => {
                   />
                 </el-form-item>
               </el-col>
-            </el-row>
 
-            <el-divider content-position="right">
-              产品&nbsp;<el-button text type="primary" @click="addItem">
-                添加
-              </el-button>
-            </el-divider>
-            <div>
+              <el-divider content-position="right">其它</el-divider>
+              <el-col :span="12" :offset="0">
+                <el-form-item label="其它" :label-width="labelWidth">
+                  <el-input v-model="form.comment" :readonly="readOnlyField" />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6" :offset="0">
+                <el-form-item label="BU" :label-width="labelWidth">
+                  <el-select v-model="form.bu_code">
+                    <el-option
+                      v-for="item in buCodeOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6" :offset="0">
+                <el-form-item label="状态" :label-width="labelWidth">
+                  <el-select v-model="form.status">
+                    <el-option
+                      v-for="item in statusOptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <template v-if="form.customer_id && form.contact_id">
+              <el-divider content-position="right">
+                产品&nbsp;<el-button text type="primary" @click="addItem">
+                  添加
+                </el-button>
+              </el-divider>
+
               <el-row :gutter="10">
                 <el-col
                   v-for="headers in itemHeader('edit')"
@@ -361,32 +415,29 @@ const calculateAmount = (item: OrderItemData) => {
                   <el-input v-model="item.amount" :readonly="!readOnlyField" />
                 </el-col>
               </el-row>
-            </div>
+            </template>
 
             <el-divider content-position="right">条款</el-divider>
             <el-row :gutter="20">
               <el-col :span="23" :offset="1">
-                <el-form-item
+                <el-collapse
                   v-for="item in terms"
                   :key="item.idx"
-                  :label="item.label"
-                  label-position="top"
-                  label-width="160"
+                  v-model="activeNames"
                 >
-                  <el-input
-                    v-model="form[item.idx]"
-                    :autosize="true"
-                    type="textarea"
-                  />
-                </el-form-item>
+                  <el-collapse-item :title="item.label" :name="item.id">
+                    <el-input
+                      v-model="form[item.idx]"
+                      :autosize="true"
+                      type="textarea"
+                  /></el-collapse-item>
+                </el-collapse>
               </el-col>
             </el-row>
           </el-col>
 
           <el-col :xl="12" :lg="14" :md="14" :sm="24" :xs="24">
-            <el-divider content-position="right">
-              概要&nbsp;<el-button text type="success"> 打印 </el-button>
-            </el-divider>
+            <el-divider content-position="left"> 概要 </el-divider>
             <el-row :gutter="10">
               <el-col :span="6" :offset="0">
                 <el-text class="mx-1" tag="b">员工</el-text>
@@ -415,7 +466,9 @@ const calculateAmount = (item: OrderItemData) => {
                 <el-text class="mx-1">{{ form.order_no || "n/a" }}</el-text>
               </el-col>
             </el-row>
-            <el-divider content-position="right"> 产品 </el-divider>
+            <el-divider content-position="left">
+              产品:&nbsp; <el-text tag="b">{{ form.leadtime_term }}</el-text>
+            </el-divider>
             <el-row :gutter="10">
               <el-col
                 v-for="header in itemHeader('shown')"
@@ -438,20 +491,31 @@ const calculateAmount = (item: OrderItemData) => {
                   <el-text>{{ item.quantity }}</el-text>
                 </el-col>
                 <el-col :span="3" :offset="0">
-                  <el-text
-                    :type="
-                      fmtPriceTextStyle(item.price_rounded, item.limit_price)
-                    "
-                    >{{ item.price_rounded }}</el-text
-                  >
+                  <el-text>{{ item.price_rounded }}</el-text>
                 </el-col>
                 <el-col :span="3" :offset="0"
                   ><el-text>{{ item.amount }}</el-text></el-col
                 >
                 <el-col :span="3" :offset="0"
-                  ><el-text>{{ item.limit_price }}</el-text></el-col
+                  ><el-text
+                    :type="
+                      fmtPriceTextStyle(item.price_rounded, item.limit_price)
+                    "
+                    >{{ item.limit_price }}</el-text
+                  ></el-col
                 >
               </template>
+            </el-row>
+
+            <el-divider content-position="right">操作</el-divider>
+            <el-row :gutter="20">
+              <el-col :span="24">
+                <el-form-item style="float: right">
+                  <el-button type="primary" @click="onSubmit"> 保存 </el-button>
+                  <el-button type="success"> 打印 </el-button>
+                  <el-button> 取消 </el-button></el-form-item
+                >
+              </el-col>
             </el-row>
           </el-col>
         </el-row>
@@ -480,10 +544,4 @@ const calculateAmount = (item: OrderItemData) => {
   color: gray;
   font-size: smaller;
 }
-
-// <span style="float: left,font-size: 12px">{{ item.descp }}</span>
-//                     <el-text tag="sub" size="small" style="float: right; color: var(--el-text-color-secondary)">
-//                       {{ item.pn }}
-//                     </el-text>
-//                     <el-text tag="sup" size="small" style="float: right; color: var(--el-text-color-secondary)">{{ item.year }}/</el-text>
 </style>

@@ -49,38 +49,46 @@ const currencyOptions = [
   }
 ];
 
+const buCodeOptions = [
+  {
+    value: "VCP",
+    label: "VCP"
+  },
+  {
+    value: "LDT",
+    label: "LDT"
+  },
+  {
+    value: "TFC",
+    label: "TFC"
+  },
+  {
+    value: "STC",
+    label: "STC"
+  }
+];
+
+// 0,取消; -1,询价; 2,签订; 3,执行; 4,完成
 const statusOptions = [
   {
     value: 0,
     label: "已取消"
   },
   {
-    value: 1,
-    label: "报价阶段"
+    value: -1,
+    label: "询价"
   },
   {
     value: 2,
-    label: "合同确认"
+    label: "签订"
   },
   {
     value: 3,
-    label: "预付款到账"
+    label: "执行"
   },
   {
     value: 4,
-    label: "订货中"
-  },
-  {
-    value: 5,
-    label: "已发货"
-  },
-  {
-    value: 6,
-    label: "已付尾款"
-  },
-  {
-    value: 7,
-    label: "已完成"
+    label: "完成"
   }
 ];
 
@@ -142,5 +150,6 @@ export {
   currencyOptions,
   customerGroupOptions,
   searchTypeOptions,
-  bussOptions
+  bussOptions,
+  buCodeOptions
 };
