@@ -2,7 +2,8 @@
 defineOptions({
   name: "Business"
 });
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { AppRequest } from "@/api/record";
 import { bussOptions } from "@/utils/options";
 import { LogTable } from "@/components/LogTable";
 import { Plus, Search } from "@element-plus/icons-vue";
@@ -14,6 +15,22 @@ const tableData = ref([]);
 const tableInfo = ref([]);
 const loading = ref(false);
 const router = useRouter();
+
+onMounted(() => {
+  // terms.forEach(item => {
+  //   form.value[item.idx] = item.term; // 将 term 值赋给对应字段
+  // });
+  // if (item_array.value.length == 0) {
+  //   addItem();
+  // }
+  const _request = new AppRequest("order");
+  const _key = keyword.value == "" ? keyword.value : "0";
+  _request.appRequest("index", {}, "").then(({ data }) => {
+    // tableData.value = data.tableData;
+    // tableInfo.value = data.props;
+    console.log(data);
+  });
+});
 
 // 查看
 const viewRecrod = (record: any) => {};

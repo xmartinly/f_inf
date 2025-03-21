@@ -68,7 +68,7 @@ const form = ref<OrderData>({
   done_date: "",
 
   order_no: "",
-  bu_code: "VC",
+  bu_code: "VCP",
   operator_name: user().username,
   order_region: user().region,
 

@@ -37,8 +37,8 @@ dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
 const ruleForm = reactive({
-  email: "778567144@qq.com",
-  password: "3Diabloly1"
+  email: "martin.liang@inficon.com",
+  password: "Inficon416"
 });
 
 const onLogin = async (formEl: FormInstance | undefined) => {

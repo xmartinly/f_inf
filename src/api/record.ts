@@ -36,12 +36,15 @@ export class AppRequest {
         return this.searchRec(id);
       case "ac":
         return this.acRec(id);
+      default:
+        return this.indexRec();
+        break;
     }
   };
   // 定义私有变量url
   private url: string;
 
-  private record_actions = ["add", "edit", "del", "search", "ac"];
+  private record_actions = ["add", "edit", "del", "search", "ac", "index"];
 
   // 定义私有方法addRec，用于添加记录
   private addRec = (data: ProductData | CustomerData | ContactData) => {
@@ -70,5 +73,8 @@ export class AppRequest {
   private acRec = (params: string | number) => {
     // 使用http.request方法发送get请求，并在url后拼接params
     return http.request<any>("get", this.url + "/meili/ac/" + params);
+  };
+  private indexRec = () => {
+    return http.request<any>("get", this.url);
   };
 }

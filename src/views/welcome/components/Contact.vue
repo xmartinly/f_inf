@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
     name: "",
     phone: "",
     email: "",
+    position: "",
     address: ""
   }),
   isEdit: false,
@@ -102,6 +103,9 @@ const selCustomer = (item: CustomerData) => {
       </el-form-item>
       <el-form-item label="电话">
         <el-input v-model="form.phone" :disabled="isReadOnly" />
+      </el-form-item>
+      <el-form-item label="职位">
+        <el-input v-model="form.position" :disabled="isReadOnly" />
       </el-form-item>
       <el-form-item label="邮箱">
         <el-input v-model.number="form.email" :disabled="isReadOnly" />

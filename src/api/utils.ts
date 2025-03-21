@@ -49,6 +49,7 @@ export type ContactData = {
   name: string;
   phone: string;
   email: string;
+  position: string;
   address: string;
 };
 

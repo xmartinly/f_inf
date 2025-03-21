@@ -216,6 +216,7 @@ const recordNormalAction = (act_: ActionType, record?: any) => {
       />
       <Contact
         v-model="showContactDialog"
+        :contactData="currentContact"
         :isEdit="isEdit"
         :isReadOnly="recReadonly"
         @submit="submitRecord"

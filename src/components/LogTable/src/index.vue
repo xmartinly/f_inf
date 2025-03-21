@@ -18,10 +18,10 @@
         :label="item.label"
         :show-overflow-tooltip="item.tooltip"
         :fixed="item.fix"
-        :formatter="fmtColumn"
         :width="item.width"
         :sortable="item.sort"
         :align="item.align"
+        :type="item.filedType"
       >
         <template #default="scope">
           <!-- 是否是链接 -->
@@ -133,15 +133,12 @@ import {
   ChatDotSquare,
   Edit
 } from "@element-plus/icons-vue";
-import * as options from "@/utils/options";
-// import { validId } from "@/utils";
+
 import * as fmt from "@/utils/formatter";
 import { useRouter } from "vue-router";
 import { TableColumnCtx } from "element-plus";
-// import { message } from "@/utils/message";
+import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
-import { ElMessage } from "element-plus";
-// import Img001 from "@/assets/images/inficon.png";
 import inficon from "@/assets/inficon.png";
 
 interface InfoLabel {
@@ -158,7 +155,8 @@ interface InfoLabel {
   blank?: boolean;
   type?: number;
   path?: string;
-  width?: string;
+  filedType?: string;
+  width?: number;
   sort?: boolean;
   eltext?: boolean;
   actions?: Array<any>;
@@ -256,10 +254,8 @@ const checkPropValue = (val: any): boolean => {
 const opAction = (row: any, action: string) => {
   const id = fmt.validId(row);
   if (!id) {
-    ElMessage({
-      message: "数据ID错误",
-      type: "error"
-    });
+    message("数据ID错误", { type: "error" });
+    return;
   }
   switch (action) {
     case "print":
@@ -413,56 +409,6 @@ const delRow = (id: any) => {
  */
 const rlsRec = (row: any) => {
   emit("release", { id: row.id });
-};
-
-/**
- * @description: 格式化数据显示
- * @param {*} row
- * @param {*} column
- * @param {*} cellValue
- * @return {*}
- */
-const fmtColumn = (row: any, column: TableColumnCtx<any>, cellValue: any) => {
-  let opt = [] as any;
-  const column_name = column.property;
-  let text = cellValue;
-  switch (column_name) {
-    case "c_type":
-      opt = options.typeOptions;
-      break;
-    case "c_status":
-      opt = options.statusOptions;
-      break;
-    case "cost_type":
-      opt = options.expOptions;
-      break;
-    case "client_type":
-      opt = options.clientOptions;
-      break;
-    case "pay_by":
-      opt = options.payOptions;
-      break;
-    case "net_profit_rate":
-      text = (cellValue * 100).toFixed(2) + "%";
-      break;
-    case "dpt_tm":
-      text = fmt.fmtTimestamp(cellValue);
-      break;
-    case "group":
-      text = fmt.fmtGroup(cellValue);
-      break;
-    default:
-      break;
-  }
-  if (opt.length) {
-    let _idx = opt.filter(
-      (x: any) => parseFloat(x.value) == parseFloat(cellValue)
-    );
-    if (_idx.length > 0) {
-      text = _idx[0].label;
-    }
-  }
-  return text;
 };
 </script>
 
