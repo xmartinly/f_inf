@@ -9,7 +9,7 @@ import {
   type ProductData,
   type CustomerData,
   type ContactData
-} from "@/api/utils";
+} from "@/api/types";
 import { searchTypeOptions } from "@/utils/options";
 import { ref } from "vue";
 import { LogTable } from "@/components/LogTable";
@@ -39,7 +39,6 @@ enum ActionType {
 // 提交记录
 const submitRecord = (form: CustomerData | ProductData | ContactData) => {
   let action = "";
-
   if (form.id) {
     action = "edit";
   } else {

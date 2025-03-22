@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
-import { type CustomerData } from "@/api/utils";
+import { type CustomerData } from "@/api/types";
 import { customerGroupOptions } from "@/utils/options";
 
 interface Customer extends CustomerData {}

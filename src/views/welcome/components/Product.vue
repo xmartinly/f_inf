@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
-import { type ProductData } from "@/api/utils";
+import { type ProductData } from "@/api/types";
 import { currencyOptions, buCodeOptions } from "@/utils/options";
 
 interface Product extends ProductData {}

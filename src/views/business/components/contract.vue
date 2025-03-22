@@ -2,7 +2,6 @@
 defineOptions({
   name: "Contract"
 });
-
 import { ref, onMounted } from "vue";
 import { useUserStoreHook as user } from "@/store/modules/user";
 import {
@@ -11,20 +10,8 @@ import {
   itemHeader,
   fmtPriceTextStyle
 } from "@/utils/formatter";
-import {
-  customerGroupOptions,
-  statusOptions,
-  buCodeOptions
-} from "@/utils/options";
-import {
-  type OrderItemData,
-  type CustomerData,
-  type ContactData,
-  type OrderData,
-  type ProductData,
-  type OrderTerm,
-  type AcData
-} from "@/api/utils";
+import { statusOptions, buCodeOptions } from "@/utils/options";
+import * as dataType from "@/api/types";
 import { acInput } from "@/utils/autoc";
 import { AppRequest } from "@/api/record";
 import { message } from "@/utils/message";
@@ -32,8 +19,8 @@ import { message } from "@/utils/message";
 const labelWidth = ref(80);
 const readOnlyField = ref(false);
 const activeNames = ref([1, 2, 3, 4]);
-const contactOptions = ref([] as ContactData[]);
-const orderItems = ref([] as OrderItemData[]);
+const contactOptions = ref([] as dataType.ContactData[]);
+const orderItems = ref([] as dataType.OrderItemData[]);
 
 onMounted(() => {
   terms.forEach(item => {
@@ -41,31 +28,26 @@ onMounted(() => {
   });
 });
 
-const form = ref<OrderData>({
+const form = ref<dataType.OrderData>({
   id: 0,
   in_date: nowDate(),
   done_date: "",
-
   order_no: "",
   bu_code: "VCP",
   operator_name: user().username,
   region: user().region,
-
   customer_id: 0,
-
   end_user: "",
   end_user_region: "",
-
   contact_id: null,
-
   status: "quoatation",
   comment: "",
   total_amount: 0,
 
   items: orderItems.value,
-  customer: {} as CustomerData,
-  contact: {} as ContactData,
-  terms: {} as OrderTerm
+  customer: {} as dataType.CustomerData,
+  contact: {} as dataType.ContactData,
+  terms: {} as dataType.OrderTerm
 });
 
 const addItem = () => {
@@ -77,14 +59,17 @@ const addItem = () => {
     price_rounded: 0,
     amount: 0,
     product: {
-      pn: "", // 确保必填字段有默认值
-      descp: ""
-      // 其他 ProductData 必要字段...
-    } as ProductData
-  } as OrderItemData);
+      pn: "",
+      descp: "",
+      id: 0
+    } as dataType.ProductData
+  } as dataType.OrderItemData);
 };
 
-const selProduct = (item: ProductData, item_row: OrderItemData) => {
+const selProduct = (
+  item: dataType.ProductData,
+  item_row: dataType.OrderItemData
+) => {
   item_row.product.descp = item.descp;
   item_row.product_id = item.id;
   item_row.list_price = item.list_price;
@@ -96,7 +81,7 @@ const selProduct = (item: ProductData, item_row: OrderItemData) => {
     item_row.quantity * item_row.list_price * (item_row.discount / 100);
 };
 
-const selCustomer = (item: CustomerData) => {
+const selCustomer = (item: dataType.CustomerData) => {
   form.value.customer_id = item.id;
   if (item.contacts.length > 0) {
     form.value.contact_id = item.contacts[0].id;
@@ -107,18 +92,21 @@ const selCustomer = (item: CustomerData) => {
   }
 };
 
-const selInput = (item: AcData, item_row: any, type: string) => {
+const selInput = (item: dataType.AcData, item_row: any, type: string) => {
   switch (type) {
     case "prod":
-      selProduct(item.model as ProductData, item_row as OrderItemData);
+      selProduct(
+        item.model as dataType.ProductData,
+        item_row as dataType.OrderItemData
+      );
       break;
     case "cust":
-      selCustomer(item.model as CustomerData);
+      selCustomer(item.model as dataType.CustomerData);
       break;
   }
 };
 // 计算单行货值
-const calculateAmount = (item: OrderItemData) => {
+const calculateAmount = (item: dataType.OrderItemData) => {
   // 确保值为数字（处理空值或非法输入）
   const quantity = Number(item.quantity) || 0;
   const listPrice = Number(item.list_price) || 0;
@@ -394,6 +382,37 @@ const onSubmit = () => {
               >
                 <el-text class="mx-1" tag="b">{{ header.label }}</el-text>
               </el-col>
+            </el-row>
+            <el-row
+              v-for="item in form.items"
+              :key="item.product.pn"
+              :gutter="10"
+            >
+              <template v-if="item.product_id">
+                <el-col :offset="0" :span="4">
+                  <el-text>{{ item.product.pn }}</el-text>
+                </el-col>
+                <el-col :span="8" :offset="0">
+                  <el-text>{{ item.product.descp }}</el-text>
+                </el-col>
+                <el-col :span="2" :offset="0">
+                  <el-text>{{ item.quantity }}</el-text>
+                </el-col>
+                <el-col :span="3" :offset="0">
+                  <el-text>{{ item.price_rounded }}</el-text>
+                </el-col>
+                <el-col :span="3" :offset="0"
+                  ><el-text>{{ item.amount }}</el-text></el-col
+                >
+                <el-col :span="3" :offset="0"
+                  ><el-text
+                    :type="
+                      fmtPriceTextStyle(item.price_rounded, item.limit_price)
+                    "
+                    >{{ item.limit_price }}</el-text
+                  ></el-col
+                >
+              </template>
             </el-row>
 
             <el-divider content-position="right">操作</el-divider>

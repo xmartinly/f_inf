@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { AppRequest } from "@/api/record";
-import { type ContactData, type CustomerData, type AcData } from "@/api/utils";
+import { type ContactData, type CustomerData, type AcData } from "@/api/types";
 
 interface Contact extends ContactData {
   customer_name?: string;

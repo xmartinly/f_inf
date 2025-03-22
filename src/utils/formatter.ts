@@ -171,17 +171,6 @@ export const itemHeader = (type: string) => {
 // 导出一个函数，用于格式化合同条款
 export const fmtContractTerms = [
   // 返回一个对象，包含合同条款
-  //   order_id
-  // origin_term
-  // leadtime_term
-  // shipment_term
-  // payment_term
-  // warranty_term
-  // claims_term
-  // other_term
-  // eudec_term
-  // misc_term
-  // status
   // 制造厂家及国别
   {
     id: 1,
@@ -259,7 +248,6 @@ export const fmtContractTerms = [
 export const fmtGroup = (_group: number | string) => {
   const group = Number(_group);
   let group_t = "";
-  // 1=End User - Std, 2=OEM, 3=Distributor, 4=Agent, 6=Reseller, 8=End User - Univ., 9=End User - Govt., 10=Intercompany, 11=Service Providers
   switch (group) {
     case 1:
       group_t = "End User - Std";
