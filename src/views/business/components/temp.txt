@@ -1,0 +1,31 @@
+  <el-row
+              v-for="item in form.items"
+              :key="item.product.pn"
+              :gutter="10"
+            >
+              <template v-if="item.product.id">
+                <el-col :offset="0" :span="4">
+                  <el-text>{{ item.product.pn }}</el-text>
+                </el-col>
+                <el-col :span="8" :offset="0">
+                  <el-text>{{ item.product.descp }}</el-text>
+                </el-col>
+                <el-col :span="2" :offset="0">
+                  <el-text>{{ item.quantity }}</el-text>
+                </el-col>
+                <el-col :span="3" :offset="0">
+                  <el-text>{{ item.price_rounded }}</el-text>
+                </el-col>
+                <el-col :span="3" :offset="0"
+                  ><el-text>{{ item.amount }}</el-text></el-col
+                >
+                <el-col :span="3" :offset="0"
+                  ><el-text
+                    :type="
+                      fmtPriceTextStyle(item.price_rounded, item.limit_price)
+                    "
+                    >{{ item.limit_price }}</el-text
+                  ></el-col
+                >
+              </template>
+            </el-row>

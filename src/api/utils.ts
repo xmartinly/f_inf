@@ -19,7 +19,7 @@ export type TableResult = {
 export type ProductData = {
   id?: number;
   pn: string;
-  description: string;
+  descp: string;
   list_price: number;
   target_price: number;
   limit_price: number;
@@ -27,6 +27,7 @@ export type ProductData = {
   p_currency: string;
   p_comment: string;
   p_class: string;
+  status?: string;
 };
 
 // 定义客户数据类型
@@ -53,66 +54,62 @@ export type ContactData = {
   address: string;
 };
 
-// 定义订单数据类型
-export type OrderData = {
+export type OrderTerm = {
   id: number;
-  in_date: string;
-  done_date: string;
-
-  order_no: string;
-  operator_name: string;
-  order_region: string;
-
-  cust_sap: string;
-  cust_name_chs: string;
-  cust_name_eng: string;
-  cust_locate: string;
-  cust_file_no: string;
-  cust_type: number;
-  customer_id?: number;
-
-  end_user: string;
-
-  cont_name: string;
-  cont_phone: string;
-  cont_email: string;
-  cont_address: string;
-  contact_id?: number;
-
+  order_id: string;
   origin_term: string;
   leadtime_term: string;
   shipment_term: string;
   payment_term: string;
   warranty_term: string;
   claims_term: string;
-  other_term: string;
-  enduser_declaration_term: string;
+  other_terms: string;
+  eudec_term: string;
   misc_term: string;
+  status: string;
+};
 
+export type AcData = {
+  value: string;
+  misc: string;
+  model: CustomerData | ProductData | ContactData;
+};
+
+// 定义订单数据类型
+export type OrderData = {
+  id: number;
+  in_date: string;
+  done_date: string;
+  contact_id: number;
+  customer_id: number;
+  order_no: string;
+  region: string;
+  operator_name: string;
+  bu_code: string;
+  end_user: string;
+  end_user_region: string;
+  total_amount: number;
   status: number;
   comment: string;
-  bu_code: string;
 
   items?: OrderItemData[];
   contact?: ContactData;
   customer?: CustomerData;
+  terms?: OrderTerm;
 };
 
 // 定义订单项数据类型
 export type OrderItemData = {
   id?: number;
-
   order_id?: number;
   contact_id: number;
   customer_id: number;
-
-  pn: string;
-  description: string;
+  product_id: number;
   quantity: number;
   discount: number;
   price_rounded: number;
   amount: number;
-
   list_price?: number;
   limit_price?: number;
+  product?: ProductData;
 };

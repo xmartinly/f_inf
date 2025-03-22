@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { type ProductData } from "@/api/utils";
-import { currencyOptions } from "@/utils/options";
+import { currencyOptions, buCodeOptions } from "@/utils/options";
 
 interface Product extends ProductData {}
 
@@ -15,14 +15,15 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   productData: () => ({
     pn: "",
-    description: "",
+    descp: "",
     list_price: 0,
     target_price: 0,
     limit_price: 0,
     p_year: 0,
     p_currency: "CNY",
     p_comment: "",
-    p_class: ""
+    p_class: "",
+    status: "active"
   }),
   isEdit: false,
   isReadOnly: false
@@ -87,16 +88,28 @@ const handleSubmit = () => {
         <el-input v-model="form.pn" :disabled="isReadOnly" />
       </el-form-item>
       <el-form-item label="描述">
-        <el-input v-model="form.description" :disabled="isReadOnly" />
+        <el-input v-model="form.descp" :disabled="isReadOnly" />
       </el-form-item>
       <el-form-item label="标准价">
-        <el-input v-model="form.list_price" :disabled="isReadOnly" />
+        <el-input
+          v-model="form.list_price"
+          :disabled="isReadOnly"
+          @blur="form.list_price = Number(form.list_price)"
+        />
       </el-form-item>
       <el-form-item label="目标价">
-        <el-input v-model="form.target_price" :disabled="isReadOnly" />
+        <el-input
+          v-model="form.target_price"
+          :disabled="isReadOnly"
+          @blur="form.target_price = Number(form.target_price)"
+        />
       </el-form-item>
       <el-form-item label="最低价">
-        <el-input v-model="form.limit_price" :disabled="isReadOnly" />
+        <el-input
+          v-model="form.limit_price"
+          :disabled="isReadOnly"
+          @blur="form.limit_price = Number(form.limit_price)"
+        />
       </el-form-item>
       <el-form-item label="年份">
         <el-input v-model="form.p_year" :disabled="isReadOnly" />
@@ -111,11 +124,18 @@ const handleSubmit = () => {
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="类别">
+        <el-select v-model="form.p_class" :disabled="isReadOnly">
+          <el-option
+            v-for="item in buCodeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="其他信息">
         <el-input v-model="form.p_comment" :disabled="isReadOnly" />
-      </el-form-item>
-      <el-form-item label="类别">
-        <el-input v-model="form.p_class" :disabled="isReadOnly" />
       </el-form-item>
     </el-form>
     <template #footer>

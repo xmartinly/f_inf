@@ -171,7 +171,6 @@ export const itemHeader = (type: string) => {
 // 导出一个函数，用于格式化合同条款
 export const fmtContractTerms = [
   // 返回一个对象，包含合同条款
-
   // 制造厂家及国别
   {
     id: 1,

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { AppRequest } from "@/api/record";
-import { type ContactData, type CustomerData } from "@/api/utils";
+import { type ContactData, type CustomerData, type AcData } from "@/api/utils";
 
 interface Contact extends ContactData {
   customer_name?: string;
@@ -81,8 +81,9 @@ const acCustomer = (key: string, cb: (arg: any) => void) => {
   });
 };
 
-const selCustomer = (item: CustomerData) => {
-  form.value.customer_id = item.id;
+const selCustomer = ({ model }: AcData) => {
+  form.value.customer_id = model.id;
+  console.log(form.value);
 };
 </script>
 
@@ -119,7 +120,7 @@ const selCustomer = (item: CustomerData) => {
           clearable
           :disabled="isReadOnly"
           :fetch-suggestions="acCustomer"
-          value-key="name_chs"
+          value-key="value"
           :trigger-on-focus="false"
           style="width: 100%"
           @select="selCustomer"
