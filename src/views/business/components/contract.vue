@@ -21,6 +21,7 @@ import {
   type CustomerData,
   type ContactData,
   type OrderData,
+  type ProductData,
   type OrderTerm,
   type AcData
 } from "@/api/utils";
@@ -31,14 +32,13 @@ import { message } from "@/utils/message";
 const labelWidth = ref(80);
 const readOnlyField = ref(false);
 const activeNames = ref([1, 2, 3, 4]);
+const contactOptions = ref([] as ContactData[]);
+const orderItems = ref([] as OrderItemData[]);
 
 onMounted(() => {
   terms.forEach(item => {
     form.value.terms[item.idx] = item.term; // 将 term 值赋给对应字段
   });
-  if (form.value.items.length == 0) {
-    addItem();
-  }
 });
 
 const form = ref<OrderData>({
@@ -56,60 +56,64 @@ const form = ref<OrderData>({
   end_user: "",
   end_user_region: "",
 
-  contact_id: 0,
+  contact_id: null,
 
-  status: -1,
+  status: "quoatation",
   comment: "",
   total_amount: 0,
 
-  items: [] as OrderItemData[],
+  items: orderItems.value,
   customer: {} as CustomerData,
   contact: {} as ContactData,
   terms: {} as OrderTerm
 });
 
 const addItem = () => {
-  form.value.items.push({} as OrderItemData);
+  form.value.items.push({
+    contact_id: form.value.contact_id,
+    customer_id: form.value.customer_id,
+    quantity: 1, // 默认数量
+    discount: 100, // 默认折扣
+    price_rounded: 0,
+    amount: 0,
+    product: {
+      pn: "", // 确保必填字段有默认值
+      descp: ""
+      // 其他 ProductData 必要字段...
+    } as ProductData
+  } as OrderItemData);
 };
 
-const selProduct = (item: AcData, item_row: OrderItemData) => {
-  // item_row.description = item.descp;
-  // item_row.list_price = item.list_price;
-  // item_row.limit_price = item.limit_price;
-  // item_row.quantity = item_row.quantity || 1;
-  // item_row.discount = item_row.discount || 100;
-  // item_row.price_rounded = item.list_price;
-  // item_row.amount =
-  //   item_row.quantity * item_row.list_price * (item_row.discount / 100);
+const selProduct = (item: ProductData, item_row: OrderItemData) => {
+  item_row.product.descp = item.descp;
+  item_row.product_id = item.id;
+  item_row.list_price = item.list_price;
+  item_row.limit_price = item.limit_price;
+  item_row.quantity = item_row.quantity || 1;
+  item_row.discount = item_row.discount || 100;
+  item_row.price_rounded = item.list_price;
+  item_row.amount =
+    item_row.quantity * item_row.list_price * (item_row.discount / 100);
 };
 
-const selCustomer = (item: AcData) => {
-  const _id = item.model.id;
-  form.value.customer_id = item.model.id;
-  form.value.items.forEach(item_row => {
-    item_row.customer_id = _id;
-  });
-};
-
-const selContact = (item: AcData) => {
-  const _id = item.model.id;
-  form.value.contact_id = _id;
-  form.value.items.forEach(item_row => {
-    item_row.contact_id = _id;
-  });
+const selCustomer = (item: CustomerData) => {
+  form.value.customer_id = item.id;
+  if (item.contacts.length > 0) {
+    form.value.contact_id = item.contacts[0].id;
+    contactOptions.value = item.contacts;
+    if (form.value.items.length == 0) {
+      addItem();
+    }
+  }
 };
 
 const selInput = (item: AcData, item_row: any, type: string) => {
-  // console.log(item, item_row, type);
   switch (type) {
     case "prod":
-      selProduct(item, item_row as OrderItemData);
+      selProduct(item.model as ProductData, item_row as OrderItemData);
       break;
     case "cust":
-      selCustomer(item);
-      break;
-    case "cont":
-      selContact(item);
+      selCustomer(item.model as CustomerData);
       break;
   }
 };
@@ -179,39 +183,19 @@ const onSubmit = () => {
                       selectedItem =>
                         selInput(selectedItem as any, form.customer, 'cust')
                     "
-                  >
-                    <template #default="{ item }">
-                      <span>{{ item.value }} <br /></span>
-                      <span class="ac_misc">{{ item.misc }}</span>
-                    </template>
-                  </el-autocomplete>
+                  />
                 </el-form-item>
               </el-col>
               <el-col :span="12" :offset="0">
                 <el-form-item label="联系人" :label-width="labelWidth">
-                  <el-autocomplete
-                    v-model="form.contact.name"
-                    clearable
-                    :disabled="readOnlyField"
-                    :fetch-suggestions="
-                      (queryString, cb) => {
-                        acInput(queryString, cb, 'cont');
-                      }
-                    "
-                    value-key="value"
-                    :trigger-on-focus="false"
-                    style="width: 100%"
-                    class="autoc"
-                    @select="
-                      selectedItem =>
-                        selInput(selectedItem as any, form.contact, 'cont')
-                    "
-                  >
-                    <template #default="{ item }">
-                      <div>{{ item.value }}</div>
-                      <span class="ac_misc">{{ item.misc }}</span>
-                    </template></el-autocomplete
-                  >
+                  <el-select v-model="form.contact_id">
+                    <el-option
+                      v-for="item in contactOptions"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    />
+                  </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -269,6 +253,7 @@ const onSubmit = () => {
               </el-col>
             </el-row>
 
+            <!-- 产品列表 -->
             <template v-if="form.customer_id && form.contact_id">
               <el-divider content-position="right">
                 产品&nbsp;<el-button text type="primary" @click="addItem">
@@ -346,6 +331,7 @@ const onSubmit = () => {
               </el-row>
             </template>
 
+            <!-- 合同条款 -->
             <el-divider content-position="right">条款</el-divider>
             <el-row :gutter="20">
               <el-col :span="23" :offset="1">

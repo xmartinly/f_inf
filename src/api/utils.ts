@@ -40,6 +40,7 @@ export type CustomerData = {
   file_no: string;
   locate: string;
   group: number;
+  contacts?: ContactData[];
 };
 
 // 定义联系人数据类型
@@ -72,7 +73,7 @@ export type OrderTerm = {
 export type AcData = {
   value: string;
   misc: string;
-  model: CustomerData | ProductData | ContactData;
+  model: CustomerData | ProductData;
 };
 
 // 定义订单数据类型
@@ -89,7 +90,7 @@ export type OrderData = {
   end_user: string;
   end_user_region: string;
   total_amount: number;
-  status: number;
+  status: string;
   comment: string;
 
   items?: OrderItemData[];
@@ -111,5 +112,5 @@ export type OrderItemData = {
   amount: number;
   list_price?: number;
   limit_price?: number;
-  product?: ProductData;
+  product: ProductData;
 };

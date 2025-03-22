@@ -171,6 +171,17 @@ export const itemHeader = (type: string) => {
 // 导出一个函数，用于格式化合同条款
 export const fmtContractTerms = [
   // 返回一个对象，包含合同条款
+  //   order_id
+  // origin_term
+  // leadtime_term
+  // shipment_term
+  // payment_term
+  // warranty_term
+  // claims_term
+  // other_term
+  // eudec_term
+  // misc_term
+  // status
   // 制造厂家及国别
   {
     id: 1,
@@ -230,7 +241,7 @@ export const fmtContractTerms = [
   // 货物的最终用户及用途声明
   {
     id: 8,
-    idx: "enduser_declaration_term",
+    idx: "eudec_term",
     row: 8,
     label: "八、货物的最终用户及用途声明：",
     term: "买方承诺\n(a) 不得将INFICON品牌产品销售给任何可能用于核武器或核武器承载，生化武器，导弹发射装置及其他军事用途的生产和研究的最终用户或其代理人。\n(b) 严格遵守出口控制法规之规定，不得向任何第三国转口销售INFICON品牌产品。\n(c) 买方应如实以书面形式申报每个最终用户的信息，并以此作为最终用户购买和使用英福康 (INFICON)品牌产品的有效文件。\n(d) 任何违反出口控制法规以及出口管控条例之规定的行为（包括但不限于以上(a)，(b)，(c)条款的行为）都将导致此合同的立即终止。\n(e) 若依据出口控制法规而作出取消合同的决定，英福康公司将不承担任何由此所导致的损失或法律责任。"

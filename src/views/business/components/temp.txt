@@ -29,3 +29,81 @@
                 >
               </template>
             </el-row>
+
+
+<template v-if="form.customer_id && form.contact_id">
+              <el-divider content-position="right">
+                产品&nbsp;<el-button text type="primary" @click="addItem">
+                  添加
+                </el-button>
+              </el-divider>
+
+              <el-row :gutter="10">
+                <el-col
+                  v-for="headers in itemHeader('edit')"
+                  :key="headers.id"
+                  :span="headers.sp"
+                  :offset="headers.off"
+                >
+                  <el-text class="mx-1" tag="b">{{ headers.label }}</el-text>
+                </el-col>
+              </el-row>
+
+              <el-row
+                v-for="item in form.items"
+                :key="item.id"
+                :gutter="10"
+                style="margin-top: 5px"
+              >
+                <el-col :span="4" :offset="1">
+                  <el-autocomplete
+                    v-model="item.product.pn"
+                    :debounce="300"
+                    clearable
+                    :disabled="readOnlyField"
+                    :fetch-suggestions="
+                      (queryString, cb) => {
+                        acInput(queryString, cb, 'prod');
+                      }
+                    "
+                    value-key="value"
+                    :trigger-on-focus="false"
+                    style="width: 100%"
+                    class="autoc"
+                    @select="
+                      selectedItem =>
+                        selInput(selectedItem as any, item, 'prod')
+                    "
+                  >
+                    <template #default="{ item }">
+                      <div>{{ item.value }}</div>
+                      <span class="ac_misc">{{ item.misc }}</span>
+                    </template></el-autocomplete
+                  >
+                </el-col>
+                <el-col :span="8" :offset="0">
+                  <el-input v-model="item.product.descp" />
+                </el-col>
+                <el-col :span="2" :offset="0">
+                  <el-input
+                    v-model="item.quantity"
+                    @input="calculateAmount(item)"
+                  />
+                </el-col>
+                <el-col :span="2" :offset="0">
+                  <el-input
+                    v-model="item.discount"
+                    @input="calculateAmount(item)"
+                  />
+                </el-col>
+                <el-col :span="3" :offset="0">
+                  <el-input
+                    v-model="item.list_price"
+                    @input="calculateAmount(item)"
+                  />
+                </el-col>
+                <el-col :span="4" :offset="0">
+                  <el-input v-model="item.amount" :readonly="!readOnlyField" />
+                </el-col>
+              </el-row>
+            </template>

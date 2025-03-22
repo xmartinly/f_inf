@@ -68,26 +68,26 @@ const buCodeOptions = [
   }
 ];
 
-// 0,取消; -1,询价; 2,签订; 3,执行; 4,完成
+// canceled,quoatation,signed,executing,done
 const statusOptions = [
   {
-    value: 0,
+    value: "canceled",
     label: "已取消"
   },
   {
-    value: -1,
+    value: "quoatation",
     label: "询价"
   },
   {
-    value: 2,
+    value: "signed",
     label: "签订"
   },
   {
-    value: 3,
-    label: "执行"
+    value: "executing",
+    label: "执行中"
   },
   {
-    value: 4,
+    value: "done",
     label: "完成"
   }
 ];
