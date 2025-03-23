@@ -65,7 +65,7 @@ const form = ref<infTypes.OrderData>({
   order_term: {} as infTypes.OrderTerm
 });
 const clearProduct = (item: infTypes.OrderItemData) => {
-  form.value.order_items.splice(orderItems.value.indexOf(item), 1);
+  orderItems.value.splice(orderItems.value.indexOf(item), 1);
 };
 const addItem = () => {
   form.value.order_items.push({
