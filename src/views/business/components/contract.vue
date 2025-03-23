@@ -40,7 +40,7 @@ const form = ref<dataType.OrderData>({
   end_user: "",
   end_user_region: "",
   contact_id: null,
-  status: "quoatation",
+  status: "quotation",
   comment: "",
   total_amount: 0,
 
@@ -49,6 +49,17 @@ const form = ref<dataType.OrderData>({
   contact: {} as dataType.ContactData,
   terms: {} as dataType.OrderTerm
 });
+
+// 删除 product.pn 为空的元素
+const filterEmptyProductPN = () => {
+  orderItems.value = orderItems.value.filter(
+    item =>
+      item.product.pn != null &&
+      item.product.pn.trim() !== "" &&
+      item.product_id != null &&
+      item.quantity != 0
+  );
+};
 
 const addItem = () => {
   form.value.items.push({
@@ -124,11 +135,7 @@ const onSubmit = () => {
     message("请在输入用户和联系人后提交", { type: "error" });
     return;
   }
-
-  form.value.items.forEach(item_row => {
-    item_row.customer_id = form.value.customer_id;
-    item_row.contact_id = form.value.contact_id;
-  });
+  filterEmptyProductPN();
   const _request = new AppRequest("order");
   const order_id = form.value.id ? +"" : undefined;
   let action = "update";

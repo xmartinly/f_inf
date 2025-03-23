@@ -26,8 +26,8 @@ onMounted(() => {
   const _request = new AppRequest("order");
   const _key = keyword.value == "" ? keyword.value : "0";
   _request.appRequest("index", {}, "").then(({ data }) => {
-    // tableData.value = data.tableData;
-    // tableInfo.value = data.props;
+    tableData.value = data.tableData;
+    tableInfo.value = data.props;
     console.log(data);
   });
 });
@@ -79,14 +79,24 @@ const search = () => {};
         </el-form>
       </div>
     </template>
-    <LogTable
-      v-model:tableData="tableData"
-      v-model:loading="loading"
-      v-model:propAndLabel="tableInfo"
-      :isActiveData="true"
-      @edit="editRecord"
-      @del="delRecord"
-      @view="viewRecrod"
-    />
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column type="expand">
+        <template #default="props">
+          <el-table :data="props.row.order_items" :border="true">
+            <el-table-column label="货号" prop="product.pn" />
+            <el-table-column label="描述" prop="product.descp" />
+            <el-table-column label="数量" prop="quantity" />
+            <el-table-column label="折扣" prop="discount" />
+            <el-table-column label="金额" prop="amount" />
+          </el-table>
+        </template>
+      </el-table-column>
+      <el-table-column label="客户" prop="customer.name_chs" />
+      <el-table-column label="联系人" prop="contact.name" />
+      <el-table-column label="用户" prop="end_user" />
+      <el-table-column label="地区" prop="end_user_region" />
+      <el-table-column label="总金额" prop="total_amount" />
+      <el-table-column label="状态" prop="status" />
+    </el-table>
   </el-card>
 </template>

@@ -75,7 +75,7 @@ const statusOptions = [
     label: "已取消"
   },
   {
-    value: "quoatation",
+    value: "quotation",
     label: "询价"
   },
   {
