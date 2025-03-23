@@ -146,7 +146,7 @@ const onSubmit = () => {
     message("请在输入用户和联系人后提交", { type: "error" });
     return;
   }
-  filterEmptyProductPN();
+  // filterEmptyProductPN();
   const _request = new AppRequest(requestType.value);
   let action = "edit";
   if (!form.value.id) {
