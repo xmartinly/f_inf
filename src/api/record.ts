@@ -1,11 +1,6 @@
 import { http } from "@/utils/http";
-import {
-  baseUrlApi,
-  type ProductData,
-  type CustomerData,
-  type ContactData,
-  type TableResult
-} from "./utils";
+import { baseUrlApi } from "./utils";
+import type * as types from "./types";
 
 // 导出AppRequest类
 export class AppRequest {
@@ -36,6 +31,8 @@ export class AppRequest {
         return this.searchRec(id);
       case "ac":
         return this.acRec(id);
+      case "show":
+        return this.getRec(id);
       default:
         return this.indexRec();
         break;
@@ -44,16 +41,26 @@ export class AppRequest {
   // 定义私有变量url
   private url: string;
 
-  private record_actions = ["add", "edit", "del", "search", "ac", "index"];
+  private record_actions = [
+    "add",
+    "edit",
+    "del",
+    "search",
+    "ac",
+    "index",
+    "show"
+  ];
 
   // 定义私有方法addRec，用于添加记录
-  private addRec = (data: ProductData | CustomerData | ContactData) => {
+  private addRec = (
+    data: types.ProductData | types.CustomerData | types.ContactData
+  ) => {
     // 使用http.request方法发送post请求，将data作为参数
     return http.request<any>("post", this.url, { data });
   };
   // 定义私有方法editRec，用于编辑记录
   private editRec = (
-    data: ProductData | CustomerData | ContactData,
+    data: types.ProductData | types.CustomerData | types.ContactData,
     id: string | number
   ) => {
     // 使用http.request方法发送put请求，将data作为参数，并在url后拼接id
@@ -67,14 +74,22 @@ export class AppRequest {
   // 定义私有方法searchRec，用于搜索记录
   private searchRec = (params?: string | number) => {
     // 使用http.request方法发送get请求，并在url后拼接params
-    return http.request<TableResult>("get", this.url + "/meili/" + params);
+    return http.request<types.TableResult>(
+      "get",
+      this.url + "/meili/" + params
+    );
   };
   // 定义私有方法acRec，用于自动完成记录
   private acRec = (params: string | number) => {
     // 使用http.request方法发送get请求，并在url后拼接params
     return http.request<any>("get", this.url + "/meili/ac/" + params);
   };
+  // 定义私有方法indexRec，用于获取所有记录
   private indexRec = () => {
     return http.request<any>("get", this.url);
+  };
+  // 定义私有方法getRec，用于获取记录
+  private getRec = (id: string | number) => {
+    return http.request<any>("get", this.url + "/" + id);
   };
 }

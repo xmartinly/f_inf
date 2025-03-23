@@ -5,11 +5,7 @@ defineOptions({
 import { Plus, Search } from "@element-plus/icons-vue";
 import { message as pureMessage } from "@/utils/message";
 import { AppRequest } from "@/api/record";
-import {
-  type ProductData,
-  type CustomerData,
-  type ContactData
-} from "@/api/types";
+import type * as infTypes from "@/api/types";
 import { searchTypeOptions } from "@/utils/options";
 import { ref } from "vue";
 import { LogTable } from "@/components/LogTable";
@@ -27,9 +23,9 @@ const showContactDialog = ref(false);
 const isEdit = ref(false);
 const recReadonly = ref(false);
 
-const currentProduct = ref<ProductData>({} as ProductData);
-const currentCustomer = ref<CustomerData>({} as CustomerData);
-const currentContact = ref<ContactData>({} as ContactData);
+const currentProduct = ref<infTypes.ProductData>({} as infTypes.ProductData);
+const currentCustomer = ref<infTypes.CustomerData>({} as infTypes.CustomerData);
+const currentContact = ref<infTypes.ContactData>({} as infTypes.ContactData);
 
 enum ActionType {
   ViewRec = 1,
@@ -37,7 +33,9 @@ enum ActionType {
   NewRec
 }
 // 提交记录
-const submitRecord = (form: CustomerData | ProductData | ContactData) => {
+const submitRecord = (
+  form: infTypes.CustomerData | infTypes.ProductData | infTypes.ContactData
+) => {
   let action = "";
   if (form.id) {
     action = "edit";
@@ -81,13 +79,13 @@ const recordRequest = (record: any, action: string) => {
 
 // 重置记录
 const resetProductData = () => {
-  currentProduct.value = {} as ProductData;
+  currentProduct.value = {} as infTypes.ProductData;
 };
 const resetCustomerData = () => {
-  currentCustomer.value = {} as CustomerData;
+  currentCustomer.value = {} as infTypes.CustomerData;
 };
 const resetContactData = () => {
-  currentContact.value = {} as ContactData;
+  currentContact.value = {} as infTypes.ContactData;
 };
 const resetDialogStatus = () => {
   setTimeout(function () {
@@ -129,15 +127,15 @@ const recordNormalAction = (act_: ActionType, record?: any) => {
   switch (type) {
     case "prod":
       showProductDialog.value = true;
-      currentProduct.value = record as ProductData;
+      currentProduct.value = record as infTypes.ProductData;
       break;
     case "cust":
       showCustomerDialog.value = true;
-      currentCustomer.value = record as CustomerData;
+      currentCustomer.value = record as infTypes.CustomerData;
       break;
     case "cont":
       showContactDialog.value = true;
-      currentContact.value = record as ContactData;
+      currentContact.value = record as infTypes.ContactData;
       break;
     default:
       showCustomerDialog.value = false;

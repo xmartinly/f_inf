@@ -11,21 +11,39 @@ import {
   fmtPriceTextStyle
 } from "@/utils/formatter";
 import { statusOptions, buCodeOptions } from "@/utils/options";
-import * as dataType from "@/api/types";
+import type * as infTypes from "@/api/types";
 import { acInput } from "@/utils/autoc";
 import { AppRequest } from "@/api/record";
 import { message } from "@/utils/message";
+import { useRouter, useRoute } from "vue-router";
+
 const labelWidth = ref(80);
+const orderId = ref(0);
+const requestType = ref("order");
 const readOnlyField = ref(false);
 const activeNames = ref([1, 2, 3, 4]);
-const contactOptions = ref([] as dataType.ContactData[]);
-const orderItems = ref([] as dataType.OrderItemData[]);
+const contactOptions = ref([] as infTypes.ContactData[]);
+const orderItems = ref([] as infTypes.OrderItemData[]);
+const router = useRouter();
+const route = useRoute();
 onMounted(() => {
-  terms.forEach(item => {
-    form.value.terms[item.idx] = item.term; // 将 term 值赋给对应字段
-  });
+  if (route.query.id != undefined) {
+    orderId.value = parseInt(route.query.id as string);
+    let _request = new AppRequest(requestType.value);
+    _request.appRequest("show", {}, orderId.value).then(({ data, status }) => {
+      if (status == "success") {
+        Object.assign(form.value, data as infTypes.OrderData);
+        selCustomer(data.customer as infTypes.CustomerData);
+      }
+      console.log(data);
+    });
+  } else {
+    terms.forEach(item => {
+      form.value.order_term[item.idx] = item.term;
+    });
+  }
 });
-const form = ref<dataType.OrderData>({
+const form = ref<infTypes.OrderData>({
   id: 0,
   in_date: nowDate(),
   done_date: "",
@@ -41,23 +59,23 @@ const form = ref<dataType.OrderData>({
   comment: "",
   total_amount: 0,
 
-  items: orderItems.value,
-  customer: {} as dataType.CustomerData,
-  contact: {} as dataType.ContactData,
-  terms: {} as dataType.OrderTerm
+  order_items: orderItems.value,
+  customer: {} as infTypes.CustomerData,
+  contact: {} as infTypes.ContactData,
+  order_term: {} as infTypes.OrderTerm
 });
 // 删除 product.pn 为空的元素
-const filterEmptyProductPN = () => {
-  orderItems.value = orderItems.value.filter(
-    item =>
-      item.product.pn != null &&
-      item.product.pn.trim() !== "" &&
-      item.product_id != null &&
-      item.quantity != 0
-  );
-};
+// const filterEmptyProductPN = () => {
+//   form.value.order_items = orderItems.value.filter(
+//     item =>
+//       item.product.pn != null &&
+//       item.product.pn.trim() !== "" &&
+//       item.product_id != null &&
+//       item.quantity != 0
+//   );
+// };
 const addItem = () => {
-  form.value.items.push({
+  form.value.order_items.push({
     contact_id: form.value.contact_id,
     customer_id: form.value.customer_id,
     quantity: 1, // 默认数量
@@ -68,51 +86,51 @@ const addItem = () => {
       pn: "",
       descp: "",
       id: 0
-    } as dataType.ProductData
-  } as dataType.OrderItemData);
+    } as infTypes.ProductData
+  } as infTypes.OrderItemData);
 };
 const selProduct = (
-  item: dataType.ProductData,
-  item_row: dataType.OrderItemData
+  item: infTypes.ProductData,
+  item_row: infTypes.OrderItemData
 ) => {
   item_row.product.descp = item.descp;
   item_row.product_id = item.id;
-  item_row.list_price = item.list_price;
-  item_row.limit_price = item.limit_price;
+  item_row.product.list_price = item.list_price;
+  item_row.product.limit_price = item.limit_price;
   item_row.quantity = item_row.quantity || 1;
   item_row.discount = item_row.discount || 100;
   item_row.price_rounded = item.list_price;
   item_row.amount =
-    item_row.quantity * item_row.list_price * (item_row.discount / 100);
+    item_row.quantity * item_row.product.list_price * (item_row.discount / 100);
 };
-const selCustomer = (item: dataType.CustomerData) => {
+const selCustomer = (item: infTypes.CustomerData) => {
   form.value.customer_id = item.id;
   if (item.contacts.length > 0) {
     form.value.contact_id = item.contacts[0].id;
     contactOptions.value = item.contacts;
-    if (form.value.items.length == 0) {
+    if (form.value.order_items.length == 0) {
       addItem();
     }
   }
 };
-const selInput = (item: dataType.AcData, item_row: any, type: string) => {
+const selInput = (item: infTypes.AcData, item_row: any, type: string) => {
   switch (type) {
     case "prod":
       selProduct(
-        item.model as dataType.ProductData,
-        item_row as dataType.OrderItemData
+        item.model as infTypes.ProductData,
+        item_row as infTypes.OrderItemData
       );
       break;
     case "cust":
-      selCustomer(item.model as dataType.CustomerData);
+      selCustomer(item.model as infTypes.CustomerData);
       break;
   }
 };
 // 计算单行货值
-const calculateAmount = (item: dataType.OrderItemData) => {
+const calculateAmount = (item: infTypes.OrderItemData) => {
   // 确保值为数字（处理空值或非法输入）
   const quantity = Number(item.quantity) || 0;
-  const listPrice = Number(item.list_price) || 0;
+  const listPrice = Number(item.product.list_price) || 0;
   const discount = Number(item.discount) || 0;
   // 计算逻辑：amount = 数量 * 单价 * (1 - 折扣百分比)
   const rounded = listPrice * (discount / 100);
@@ -120,21 +138,25 @@ const calculateAmount = (item: dataType.OrderItemData) => {
   item.price_rounded = parseFloat(rounded.toFixed(3));
   item.amount = parseFloat(amount.toFixed(3));
 };
+const goBack = () => {
+  router.push({ path: "/business/index" });
+};
 const onSubmit = () => {
   if (form.value.customer_id == 0 || form.value.contact_id == 0) {
     message("请在输入用户和联系人后提交", { type: "error" });
     return;
   }
   filterEmptyProductPN();
-  const _request = new AppRequest("order");
-  const order_id = form.value.id ? +"" : undefined;
-  let action = "update";
-  if (!order_id) {
+  const _request = new AppRequest(requestType.value);
+  let action = "edit";
+  if (!form.value.id) {
     action = "add";
   }
-  _request.appRequest(action, form.value, order_id).then(({ data, status }) => {
-    message(data, { type: status });
-  });
+  _request
+    .appRequest(action, form.value, form.value.id)
+    .then(({ data, status }) => {
+      message(data, { type: status });
+    });
 };
 </script>
 
@@ -152,7 +174,6 @@ const onSubmit = () => {
                   <el-autocomplete
                     v-model="form.customer.name_chs"
                     clearable
-                    :disabled="readOnlyField"
                     :fetch-suggestions="
                       (queryString, cb) => {
                         acInput(queryString, cb, 'cust');
@@ -251,7 +272,7 @@ const onSubmit = () => {
                 </el-col>
               </el-row>
               <el-row
-                v-for="item in form.items"
+                v-for="item in form.order_items"
                 :key="item.id"
                 :gutter="10"
                 style="margin-top: 5px"
@@ -261,7 +282,6 @@ const onSubmit = () => {
                     v-model="item.product.pn"
                     :debounce="300"
                     clearable
-                    :disabled="readOnlyField"
                     :fetch-suggestions="
                       (queryString, cb) => {
                         acInput(queryString, cb, 'prod');
@@ -299,7 +319,7 @@ const onSubmit = () => {
                 </el-col>
                 <el-col :span="3" :offset="0">
                   <el-input
-                    v-model="item.list_price"
+                    v-model="item.product.list_price"
                     @input="calculateAmount(item)"
                   />
                 </el-col>
@@ -319,7 +339,7 @@ const onSubmit = () => {
                 >
                   <el-collapse-item :title="item.label" :name="item.id">
                     <el-input
-                      v-model="form.terms[item.idx]"
+                      v-model="form.order_term[item.idx]"
                       :autosize="true"
                       type="textarea"
                   /></el-collapse-item>
@@ -340,7 +360,16 @@ const onSubmit = () => {
                 <el-text class="mx-1" tag="b">日期</el-text>
               </el-col>
               <el-col :span="6" :offset="0">
-                <el-text class="mx-1" tag="b">编号</el-text>
+                <el-text class="mx-1" tag="b"
+                  >编号&nbsp;<el-button
+                    v-if="form.order_no.indexOf(form.region) < 0"
+                    type="primary"
+                    text
+                    style="margin-top: -2px"
+                  >
+                    生成
+                  </el-button></el-text
+                >
               </el-col>
             </el-row>
             <el-row :gutter="10">
@@ -348,7 +377,7 @@ const onSubmit = () => {
                 <el-text class="mx-1">{{ form.operator_name }}</el-text>
               </el-col>
               <el-col :span="6" :offset="0">
-                <el-text class="mx-1">{{ form.terms.origin_term }}</el-text>
+                <el-text class="mx-1">{{ form.region }}</el-text>
               </el-col>
               <el-col :span="6" :offset="0">
                 <el-text class="mx-1">{{ form.in_date }}</el-text>
@@ -359,7 +388,7 @@ const onSubmit = () => {
             </el-row>
             <el-divider content-position="left">
               产品:&nbsp;
-              <el-text tag="b">{{ form.terms.leadtime_term }}</el-text>
+              <el-text tag="b">{{ form.order_term.leadtime_term }}</el-text>
             </el-divider>
             <el-row :gutter="10">
               <el-col
@@ -372,7 +401,7 @@ const onSubmit = () => {
               </el-col>
             </el-row>
             <el-row
-              v-for="item in form.items"
+              v-for="item in form.order_items"
               :key="item.product.pn"
               :gutter="10"
             >
@@ -407,8 +436,7 @@ const onSubmit = () => {
               <el-col :span="24">
                 <el-form-item style="float: right">
                   <el-button type="primary" @click="onSubmit"> 保存 </el-button>
-                  <el-button type="success"> 打印 </el-button>
-                  <el-button> 取消 </el-button></el-form-item
+                  <el-button @click="goBack"> 取消 </el-button></el-form-item
                 >
               </el-col>
             </el-row>

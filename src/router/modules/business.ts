@@ -17,7 +17,7 @@ export default {
     {
       path: "/business/contract",
       name: "Contract",
-      component: () => import("@/views/business/components/contract.vue"),
+      component: () => import("@/views/business/components/ContractView.vue"),
       meta: {
         title: "合同",
         showLink: false

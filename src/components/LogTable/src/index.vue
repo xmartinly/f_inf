@@ -59,9 +59,6 @@
                   {{ status }}
                 </li>
               </template>
-              <el-icon :size="16">
-                <ChatDotSquare />
-              </el-icon>
 
               <!-- <el-button text :icon="ChatDotSquare" /> -->
             </el-tooltip>
@@ -92,7 +89,7 @@
             <el-button
               v-else
               link
-              :icon="Unlock"
+              :icon="getIcons('Unlock')"
               type="warning"
               @click="rlsRec(scope.row)"
             />
@@ -123,16 +120,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import {
-  Unlock,
-  Checked,
-  View,
-  Printer,
-  Delete,
-  Finished,
-  ChatDotSquare,
-  Edit
-} from "@element-plus/icons-vue";
+import { getIcons } from "@/utils/helper";
 
 import * as fmt from "@/utils/formatter";
 import { useRouter } from "vue-router";
@@ -191,26 +179,6 @@ const props = defineProps({
 const currentPage = ref(1);
 const pagesize = ref(10);
 const router = useRouter();
-
-const getIcons = (icon_text: string) => {
-  switch (icon_text) {
-    case "Print":
-      return Printer;
-    case "Delete":
-      return Delete;
-    case "Edit":
-      return Edit;
-    case "View":
-      return View;
-    case "Checked":
-      return Checked;
-    case "Finished":
-      return Finished;
-
-    default:
-      break;
-  }
-};
 
 const emit = defineEmits([
   "view",

@@ -12,6 +12,15 @@ export default [
     }
   },
   {
+    path: "/orderpdf",
+    name: "OrderPdf",
+    component: () => import("@/views/business/components/OrderPdf.vue"),
+    meta: {
+      title: "打印",
+      showLink: false
+    }
+  },
+  {
     path: "/redirect",
     component: Layout,
     meta: {

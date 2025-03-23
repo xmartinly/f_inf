@@ -90,10 +90,10 @@ export type OrderData = {
   status: string;
   comment: string;
 
-  items?: OrderItemData[];
   contact?: ContactData;
   customer?: CustomerData;
-  terms?: OrderTerm;
+  order_term?: OrderTerm;
+  order_items?: OrderItemData[];
 };
 
 // 定义订单项数据类型
