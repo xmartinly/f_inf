@@ -17,12 +17,6 @@ const loading = ref(false);
 const router = useRouter();
 
 onMounted(() => {
-  // terms.forEach(item => {
-  //   form.value[item.idx] = item.term; // 将 term 值赋给对应字段
-  // });
-  // if (item_array.value.length == 0) {
-  //   addItem();
-  // }
   const _request = new AppRequest("order");
   const _key = keyword.value == "" ? keyword.value : "0";
   _request.appRequest("index", {}, "").then(({ data }) => {
