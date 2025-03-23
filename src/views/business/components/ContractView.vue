@@ -64,16 +64,9 @@ const form = ref<infTypes.OrderData>({
   contact: {} as infTypes.ContactData,
   order_term: {} as infTypes.OrderTerm
 });
-// 删除 product.pn 为空的元素
-// const filterEmptyProductPN = () => {
-//   form.value.order_items = orderItems.value.filter(
-//     item =>
-//       item.product.pn != null &&
-//       item.product.pn.trim() !== "" &&
-//       item.product_id != null &&
-//       item.quantity != 0
-//   );
-// };
+const clearProduct = (item: infTypes.OrderItemData) => {
+  form.value.order_items.splice(orderItems.value.indexOf(item), 1);
+};
 const addItem = () => {
   form.value.order_items.push({
     contact_id: form.value.contact_id,
@@ -291,6 +284,7 @@ const onSubmit = () => {
                     :trigger-on-focus="false"
                     style="width: 100%"
                     class="autoc"
+                    @clear="clearProduct(item)"
                     @select="
                       selectedItem =>
                         selInput(selectedItem as any, item, 'prod')
