@@ -23,7 +23,6 @@ const requestType = ref("order");
 const readOnlyField = ref(false);
 const activeNames = ref([1, 2, 3, 4]);
 const contactOptions = ref([] as infTypes.ContactData[]);
-const orderItems = ref([] as infTypes.OrderItemData[]);
 const router = useRouter();
 const route = useRoute();
 onMounted(() => {
@@ -58,14 +57,13 @@ const form = ref<infTypes.OrderData>({
   status: "quotation",
   comment: "",
   total_amount: 0,
-
-  order_items: orderItems.value,
+  order_items: {} as infTypes.OrderItemData[],
   customer: {} as infTypes.CustomerData,
   contact: {} as infTypes.ContactData,
   order_term: {} as infTypes.OrderTerm
 });
 const clearProduct = (item: infTypes.OrderItemData) => {
-  orderItems.value.splice(orderItems.value.indexOf(item), 1);
+  // orderItems.value.splice(orderItems.value.indexOf(item), 1);
 };
 const addItem = () => {
   form.value.order_items.push({
