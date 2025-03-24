@@ -3,7 +3,7 @@ defineOptions({
   name: "Contract"
 });
 import { ref, onMounted } from "vue";
-import { useUserStoreHook as user } from "@/store/modules/user";
+import { useUserStoreHook } from "@/store/modules/user";
 import {
   nowDate,
   fmtContractTerms as terms,
@@ -14,6 +14,7 @@ import { statusOptions, buCodeOptions } from "@/utils/options";
 import type * as infTypes from "@/api/types";
 import { acInput } from "@/utils/autoc";
 import { AppRequest } from "@/api/record";
+import { requestOrderNo } from "@/api/misc";
 import { message } from "@/utils/message";
 import { useRouter, useRoute } from "vue-router";
 
@@ -23,7 +24,7 @@ const requestType = ref("order");
 const readOnlyField = ref(false);
 const activeNames = ref([1, 2, 3, 4]);
 const contactOptions = ref([] as infTypes.ContactData[]);
-const employOptions = ref([] as infTypes.UserData[]);
+const employeeOptions = ref([] as infTypes.UserData[]);
 const router = useRouter();
 const route = useRoute();
 onMounted(() => {
@@ -33,6 +34,10 @@ onMounted(() => {
     _request.appRequest("show", {}, orderId.value).then(({ data, status }) => {
       if (status == "success") {
         Object.assign(form.value, data as infTypes.OrderData);
+        Object.assign(
+          contactOptions.value,
+          data.contacts as infTypes.UserData[]
+        );
         selCustomer(data.customer as infTypes.CustomerData);
       }
     });
@@ -40,14 +45,13 @@ onMounted(() => {
     terms.forEach(item => {
       form.value.order_term[item.idx] = item.term;
     });
-    let _request = new AppRequest("users");
-    _request.appRequest("index", {}, "").then(({ data, status }) => {
-      if (status == "success") {
-        employOptions.value = data as infTypes.UserData[];
-      }
-    });
   }
-  console.log(user());
+  let _request = new AppRequest("users");
+  _request.appRequest("index", {}, "").then(({ data, status }) => {
+    if (status == "success") {
+      employeeOptions.value = data as infTypes.UserData[];
+    }
+  });
 });
 const form = ref<infTypes.OrderData>({
   id: 0,
@@ -56,7 +60,7 @@ const form = ref<infTypes.OrderData>({
   user_id: null,
   customer_id: null,
   contact_id: null,
-  region: user().region,
+  region: useUserStoreHook().region,
   order_no: "",
   bu_code: "VCP",
   end_user: "",
@@ -72,6 +76,20 @@ const form = ref<infTypes.OrderData>({
 const clearProduct = (item: infTypes.OrderItemData) => {
   // orderItems.value.splice(orderItems.value.indexOf(item), 1);
 };
+const genOrderNo = () => {
+  if (!form.value.bu_code || !form.value.user_id) {
+    message("请选择业务部门和业务员", { type: "error" });
+    return;
+  }
+  requestOrderNo(form.value.bu_code, form.value.user_id).then(
+    ({ data, status }) => {
+      if (status == "success") {
+        form.value.order_no = data as string;
+      }
+    }
+  );
+};
+
 const addItem = () => {
   form.value.order_items.push({
     contact_id: form.value.contact_id,
@@ -252,7 +270,7 @@ const onSubmit = () => {
                 <el-form-item label="联络人" :label-width="labelWidth">
                   <el-select v-model="form.user_id">
                     <el-option
-                      v-for="item in employOptions"
+                      v-for="item in employeeOptions"
                       :key="item.id"
                       :label="item.chs_name"
                       :value="item.id"
@@ -373,6 +391,7 @@ const onSubmit = () => {
                     type="primary"
                     text
                     style="margin-top: -2px"
+                    @click="genOrderNo"
                   >
                     生成
                   </el-button></el-text
@@ -381,7 +400,9 @@ const onSubmit = () => {
             </el-row>
             <el-row :gutter="10">
               <el-col :span="6" :offset="0">
-                <el-text class="mx-1">{{ user().chs_name }}</el-text>
+                <el-text class="mx-1">{{
+                  useUserStoreHook().chs_name
+                }}</el-text>
               </el-col>
               <el-col :span="6" :offset="0">
                 <el-text class="mx-1">{{ form.region }}</el-text>

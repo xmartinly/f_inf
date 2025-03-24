@@ -97,6 +97,7 @@ export function setToken(data: DataInfo<Date>) {
       username,
       roles,
       region,
+      chs_name,
       permissions
     });
   }

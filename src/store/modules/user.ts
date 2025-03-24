@@ -83,7 +83,6 @@ export const useUserStore = defineStore({
           .then(data => {
             if (data.code == 200) {
               resolve(data);
-              console.log(data);
             }
             // setToken(data.data);
           })
