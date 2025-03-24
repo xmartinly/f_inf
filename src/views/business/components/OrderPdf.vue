@@ -6,6 +6,7 @@ import { ref, onMounted, onBeforeMount } from "vue";
 import type * as infTypes from "@/api/types";
 import { AppRequest } from "@/api/record";
 import { useRoute } from "vue-router";
+import { fmtTimestamp } from "@/utils/formatter";
 import inficon from "@/assets/inficon.png";
 const requestType = ref("order");
 const route = useRoute();
@@ -34,7 +35,7 @@ const order = ref<infTypes.OrderData>({
   done_date: "",
   order_no: "",
   bu_code: "VCP",
-  operator_name: "",
+  user_id: 0,
   region: "",
   customer_id: 0,
   end_user: "",
@@ -43,67 +44,12 @@ const order = ref<infTypes.OrderData>({
   status: "quotation",
   comment: "",
   total_amount: 0,
-
-  // order_items: {} as infTypes.OrderItemData,
+  user: {} as infTypes.UserData,
+  order_items: [] as infTypes.OrderItemData[],
   customer: {} as infTypes.CustomerData,
   contact: {} as infTypes.ContactData,
   order_term: {} as infTypes.OrderTerm
 });
-// import { getCnt } from "@/api/contract";
-// import { CttRecVO } from "@/api/contact/types";
-// import { CoRecVO } from "@/api/company/types";
-// import { useRoute } from "vue-router";
-// import { closeWindow } from "@/utils";
-// import { fmtMoney } from "@/utils/formatter";
-// import { digitUppercase, setTerms } from "@/utils/contract";
-// import { typeOptions } from "@/utils/options";
-
-// const route = useRoute();
-// const stampSrc = ref("");
-// const chsUpper = ref("");
-// const cntLabel = ref("");
-// const cntId = ref(0);
-// const imgStyle = ref<any>({});
-// const cntTerms = ref<any>();
-
-// //订单信息对象
-// const cntInfo = reactive({
-//   id: 0,
-//   c_label: "",
-//   quo_date: "",
-//   cnt_date: "",
-//   cnt_title: "",
-//   cnt_no: "",
-//   quo_no: "",
-//   pay_detail: "",
-//   tax_rate: 0,
-//   total_amount: 0,
-//   total_profit: 0,
-//   total_cost: 0,
-//   lead_week: "8",
-//   warrt_period: 3,
-//   valid_date: "",
-//   cnt_type: 1,
-//   created_at: "",
-//   updated_date: "",
-//   seller: {} as CoRecVO,
-//   seller_ctt: {} as CttRecVO,
-//   buyer: {} as CoRecVO,
-//   buyer_ctt: {} as CttRecVO,
-//   sales: [] as any
-// });
-
-// onBeforeMount(() => {
-//   cntId.value = Number(route.query.cnt_id);
-// });
-
-// onMounted(() => {
-//   reqCntInfo();
-
-//   setTimeout(window.print, 3000);
-//   setTimeout(closeWindow, 5000);
-// });
-
 // const reqCntInfo = () => {
 //   getCnt(cntId.value + "").then(({ data }) => {
 //     Object.assign(cntInfo, data);
@@ -143,7 +89,7 @@ const order = ref<infTypes.OrderData>({
   >
     <el-row :gutter="20">
       <el-col :span="21" :offset="1">
-        <el-image style="width: 200px; height: 50px" :src="inficon" />
+        <el-image style="width: 200px; height: 45px" :src="inficon" />
       </el-col>
     </el-row>
 
@@ -165,13 +111,15 @@ const order = ref<infTypes.OrderData>({
     <p style="top: 95px; left: 560px" class="ft12b">合同号:</p>
     <p style="top: 95px; left: 620px" class="ft12">{{ order.order_no }}</p>
     <p style="top: 115px; left: 560px" class="ft12b">日期:</p>
-    <p style="top: 115px; left: 620px" class="ft12">{{ order.in_date }}</p>
-    <p style="top: 135px; left: 560px" class="ft12b">档案号:</p>
-    <p style="top: 135px; left: 620px" class="ft12">
-      {{ order.customer.file_no }}
+    <p style="top: 115px; left: 620px" class="ft12">
+      {{ fmtTimestamp(order.in_date) }}
     </p>
-    <p style="top: 155px; left: 560px" class="ft12b">SAP No：</p>
-    <p style="top: 155px; left: 620px" class="ft12">
+    <p style="top: 135px; left: 40px" class="ft12b">最终用户:</p>
+    <p style="top: 135px; left: 100px" class="ft12">
+      {{ order.end_user }}
+    </p>
+    <p style="top: 135px; left: 560px" class="ft12b">SAP No：</p>
+    <p style="top: 135px; left: 620px" class="ft12">
       {{ order.customer.sap_no }}
     </p>
 
@@ -365,7 +313,7 @@ const order = ref<infTypes.OrderData>({
         <td>联系人：</td>
         <td>{{ order.contact.name }}</td>
         <td>联系人：</td>
-        <td>{{ order.operator_name }}</td>
+        <td>{{ order.user.chs_name }}</td>
       </tr>
       <tr>
         <td colspan="2">负责人签字：</td>

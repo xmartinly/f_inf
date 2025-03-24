@@ -6,8 +6,12 @@ export type UserResult = {
   status: string;
   success: boolean;
   data: {
+    /** ID */
+    id: number;
     /** 用户名 */
     username: string;
+    /** 中文名 */
+    chs_name: string;
     /** 邮箱 */
     email: string;
     /** 地区 */

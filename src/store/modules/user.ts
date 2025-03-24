@@ -19,8 +19,12 @@ import { type DataInfo, removeToken, userKey } from "@/utils/auth";
 export const useUserStore = defineStore({
   id: "infcd-user",
   state: (): userType => ({
+    // ID
+    id: storageLocal().getItem<DataInfo<number>>(userKey)?.id ?? "",
     // 用户名
     username: storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "",
+    // 中文名
+    chs_name: storageLocal().getItem<DataInfo<number>>(userKey)?.chs_name ?? "",
     // 邮箱
     email: storageLocal().getItem<DataInfo<number>>(userKey)?.email ?? "",
     // 页面级别权限
@@ -36,9 +40,17 @@ export const useUserStore = defineStore({
     loginDay: 7
   }),
   actions: {
+    /** 存储ID */
+    SET_ID(id: string | number) {
+      this.id = id;
+    },
     /** 存储用户名 */
     SET_USERNAME(username: string) {
       this.username = username;
+    },
+    /** 存储中文名 */
+    SET_CHSNAME(chs_name: string) {
+      this.chs_name = chs_name;
     },
     /** 存储昵称 */
     SET_EMAIL(email: string) {

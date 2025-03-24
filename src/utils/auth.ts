@@ -11,8 +11,12 @@ export interface DataInfo<T> {
   expires: T;
   /** 用于调用刷新accessToken的接口时所需的token */
   refreshToken: string;
+  /** ID */
+  id?: string | number;
   /** 用户名 */
   username?: string;
+  /** 中文名 */
+  chs_name?: string;
   /** 邮箱 */
   email?: string;
   /** 当前登录用户的角色 */
@@ -70,7 +74,17 @@ export function setToken(data: DataInfo<Date>) {
       : {}
   );
 
-  function setUserKey({ email, username, roles, permissions, region }) {
+  function setUserKey({
+    email,
+    username,
+    roles,
+    permissions,
+    region,
+    id,
+    chs_name
+  }) {
+    useUserStoreHook().SET_ID(id);
+    useUserStoreHook().SET_CHSNAME(chs_name);
     useUserStoreHook().SET_USERNAME(username);
     useUserStoreHook().SET_EMAIL(email);
     useUserStoreHook().SET_ROLES(roles);
@@ -88,15 +102,20 @@ export function setToken(data: DataInfo<Date>) {
   }
 
   if (data.username && data.roles) {
-    const { username, roles, email, region } = data;
+    const { username, roles, email, region, id, chs_name } = data;
     setUserKey({
       username,
       email,
       roles,
       region,
+      id,
+      chs_name,
       permissions: data?.permissions ?? []
     });
   } else {
+    const id = storageLocal().getItem<DataInfo<number>>(userKey)?.id ?? "";
+    const chs_name =
+      storageLocal().getItem<DataInfo<number>>(userKey)?.chs_name ?? "";
     const username =
       storageLocal().getItem<DataInfo<number>>(userKey)?.username ?? "";
     const email =
@@ -112,7 +131,9 @@ export function setToken(data: DataInfo<Date>) {
       region,
       username,
       roles,
-      permissions
+      permissions,
+      id,
+      chs_name
     });
   }
 }

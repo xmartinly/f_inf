@@ -109,10 +109,10 @@ const selCustomer = ({ model }: AcData) => {
         <el-input v-model="form.position" :disabled="isReadOnly" />
       </el-form-item>
       <el-form-item label="邮箱">
-        <el-input v-model.number="form.email" :disabled="isReadOnly" />
+        <el-input v-model="form.email" :disabled="isReadOnly" />
       </el-form-item>
       <el-form-item label="地址">
-        <el-input v-model.number="form.address" :disabled="isReadOnly" />
+        <el-input v-model="form.address" :disabled="isReadOnly" />
       </el-form-item>
       <el-form-item label="公司">
         <el-autocomplete

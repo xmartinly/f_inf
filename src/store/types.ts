@@ -37,8 +37,10 @@ export type setType = {
 };
 
 export type userType = {
+  id?: string | number;
   email: string;
   username?: string;
+  chs_name?: string;
   region: string;
   roles?: Array<string>;
   permissions?: Array<string>;

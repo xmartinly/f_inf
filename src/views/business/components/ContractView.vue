@@ -23,6 +23,7 @@ const requestType = ref("order");
 const readOnlyField = ref(false);
 const activeNames = ref([1, 2, 3, 4]);
 const contactOptions = ref([] as infTypes.ContactData[]);
+const employOptions = ref([] as infTypes.UserData[]);
 const router = useRouter();
 const route = useRoute();
 onMounted(() => {
@@ -34,30 +35,36 @@ onMounted(() => {
         Object.assign(form.value, data as infTypes.OrderData);
         selCustomer(data.customer as infTypes.CustomerData);
       }
-      console.log(data);
     });
   } else {
     terms.forEach(item => {
       form.value.order_term[item.idx] = item.term;
     });
+    let _request = new AppRequest("users");
+    _request.appRequest("index", {}, "").then(({ data, status }) => {
+      if (status == "success") {
+        employOptions.value = data as infTypes.UserData[];
+      }
+    });
   }
+  console.log(user());
 });
 const form = ref<infTypes.OrderData>({
   id: 0,
   in_date: nowDate(),
   done_date: "",
+  user_id: null,
+  customer_id: null,
+  contact_id: null,
+  region: user().region,
   order_no: "",
   bu_code: "VCP",
-  operator_name: user().username,
-  region: user().region,
-  customer_id: 0,
   end_user: "",
   end_user_region: "",
-  contact_id: null,
   status: "quotation",
   comment: "",
   total_amount: 0,
-  order_items: {} as infTypes.OrderItemData[],
+  order_items: [] as infTypes.OrderItemData[],
   customer: {} as infTypes.CustomerData,
   contact: {} as infTypes.ContactData,
   order_term: {} as infTypes.OrderTerm
@@ -198,15 +205,12 @@ const onSubmit = () => {
             <el-row :gutter="20">
               <el-col :span="12" :offset="0">
                 <el-form-item label="最终用户" :label-width="labelWidth">
-                  <el-input v-model="form.end_user" :readonly="readOnlyField" />
+                  <el-input v-model="form.end_user" />
                 </el-form-item>
               </el-col>
               <el-col :span="12" :offset="0">
                 <el-form-item label="地区" :label-width="labelWidth">
-                  <el-input
-                    v-model="form.end_user_region"
-                    :readonly="readOnlyField"
-                  />
+                  <el-input v-model="form.end_user_region" />
                 </el-form-item>
               </el-col>
             </el-row>
@@ -239,11 +243,22 @@ const onSubmit = () => {
             </el-row>
             <!-- comment -->
             <el-row :gutter="20">
-              <el-col :span="24" :offset="0">
+              <el-col :span="12" :offset="0">
                 <el-form-item label="简述" :label-width="labelWidth">
-                  <el-input v-model="form.comment" :readonly="readOnlyField" />
+                  <el-input v-model="form.comment" />
                 </el-form-item>
               </el-col>
+              <el-col :span="12" :offset="0">
+                <el-form-item label="联络人" :label-width="labelWidth">
+                  <el-select v-model="form.user_id">
+                    <el-option
+                      v-for="item in employOptions"
+                      :key="item.id"
+                      :label="item.chs_name"
+                      :value="item.id"
+                    />
+                  </el-select> </el-form-item
+              ></el-col>
             </el-row>
             <!-- 产品列表 -->
             <template v-if="form.customer_id && form.contact_id">
@@ -343,7 +358,7 @@ const onSubmit = () => {
             <el-divider content-position="left"> 概要 </el-divider>
             <el-row :gutter="10">
               <el-col :span="6" :offset="0">
-                <el-text class="mx-1" tag="b">员工</el-text>
+                <el-text class="mx-1" tag="b">操作员</el-text>
               </el-col>
               <el-col :span="6" :offset="0">
                 <el-text class="mx-1" tag="b">地区</el-text>
@@ -366,7 +381,7 @@ const onSubmit = () => {
             </el-row>
             <el-row :gutter="10">
               <el-col :span="6" :offset="0">
-                <el-text class="mx-1">{{ form.operator_name }}</el-text>
+                <el-text class="mx-1">{{ user().chs_name }}</el-text>
               </el-col>
               <el-col :span="6" :offset="0">
                 <el-text class="mx-1">{{ form.region }}</el-text>

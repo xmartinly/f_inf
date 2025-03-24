@@ -35,7 +35,6 @@ export class AppRequest {
         return this.getRec(id);
       default:
         return this.indexRec();
-        break;
     }
   };
   // 定义私有变量url

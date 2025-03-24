@@ -26,6 +26,16 @@ export type ProductData = {
   p_class: string;
   status?: string;
 };
+// 定义产品数据类型
+export type UserData = {
+  id?: number;
+  name: string;
+  chs_name: string;
+  region: number;
+  group: number;
+  email: number;
+  password?: string;
+};
 
 // 定义客户数据类型
 export type CustomerData = {
@@ -50,6 +60,7 @@ export type ContactData = {
   email: string;
   position: string;
   address: string;
+  customer?: CustomerData;
 };
 
 export type OrderTerm = {
@@ -80,9 +91,9 @@ export type OrderData = {
   done_date: string;
   contact_id: number;
   customer_id: number;
+  user_id: number | string;
   order_no: string;
   region: string;
-  operator_name: string;
   bu_code: string;
   end_user: string;
   end_user_region: string;
@@ -92,6 +103,7 @@ export type OrderData = {
 
   contact?: ContactData;
   customer?: CustomerData;
+  user?: UserData;
   order_term?: OrderTerm;
   order_items?: OrderItemData[];
 };
