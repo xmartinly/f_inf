@@ -11,6 +11,9 @@ import inficon from "@/assets/inficon.png";
 const requestType = ref("order");
 const route = useRoute();
 const orderId = ref(0);
+interface OrderInfo extends infTypes.OrderData {
+  seller: string;
+}
 onBeforeMount(() => {
   if (route.query.id == undefined) {
     return;
@@ -24,13 +27,27 @@ onBeforeMount(() => {
     window.document.title = order.value.order_no;
   });
 });
+const leftOrderInfo = ref([
+  { label: "买方：", field: "customer.name_chs" },
+  { label: "卖方：", field: "seller" },
+  { label: "最终用户：", field: "end_user" }
+]);
+const rightOrderInfo = ref([
+  { label: "合同号：", field: "order_no" },
+  { label: "日期：", field: "in_date" },
+  { label: "SAP No：", field: "customer.sap_no" }
+]);
+const getFieldValue = (obj: any, path: string) => {
+  return path.split(".").reduce((o, p) => (o || {})[p], obj);
+};
 
 onMounted(() => {
   // setTimeout(window.print, 3000);
   // setTimeout(closeWindow, 5000);
 });
-const order = ref<infTypes.OrderData>({
+const order = ref<OrderInfo>({
   id: 0,
+  seller: "英福康（广州）真空仪器有限公司",
   in_date: "",
   done_date: "",
   order_no: "",
@@ -50,45 +67,12 @@ const order = ref<infTypes.OrderData>({
   contact: {} as infTypes.ContactData,
   order_term: {} as infTypes.OrderTerm
 });
-// const reqCntInfo = () => {
-//   getCnt(cntId.value + "").then(({ data }) => {
-//     Object.assign(cntInfo, data);
-//     // productSales.value = JSON.parse(data.products as string);
-//     // productSales.value = cntInfo.products;
-//     document.title = cntInfo.cnt_title;
-//     let lable = typeOptions.filter(x => x.id == cntInfo.cnt_type);
-//     cntLabel.value = lable[0].label;
-//     cntTerms.value = setTerms(
-//       cntInfo.pay_detail,
-//       cntInfo.lead_week,
-//       cntInfo.warrt_period
-//     );
-//     chsUpper.value = digitUppercase(cntInfo.total_amount);
-//   });
-// };
-
-// const chapterStyle = () => {
-//   const init_top = 910;
-//   const init_left = 460;
-//   let top_pos = init_top + Math.floor(Math.random() * 23);
-//   let left_pos = init_left + Math.ceil(Math.random() * 43);
-
-//   let rotate_deg = Math.round(Math.random() * 111);
-//   imgStyle.value = {
-//     top: top_pos.toString() + "px",
-//     left: left_pos.toString() + "px",
-//     transform: `rotate(${rotate_deg}deg)`,
-//     position: "absolute"
-//   };
-// };
 </script>
 
 <template>
-  <div
-    style="position: relative; width: 795px; height: 99.5%; margin-top: 10px"
-  >
+  <div>
     <el-row :gutter="20">
-      <el-col :span="21" :offset="1">
+      <el-col :span="23" :offset="1">
         <el-image style="width: 200px; height: 45px" :src="inficon" />
       </el-col>
     </el-row>
@@ -99,8 +83,51 @@ const order = ref<infTypes.OrderData>({
       </el-col>
     </el-row>
 
+    <el-row v-if="order.customer.name_chs" :gutter="20">
+      <el-col
+        v-for="item in leftOrderInfo"
+        :key="item.label"
+        :span="12"
+        :offset="0"
+      >
+        <span
+          class="ft12b"
+          style="
+            display: inline-block;
+            border: 1px solid black;
+            
+            width: 85px;
+            height: 14px;
+            text-align: center;
+          "
+          >{{ item.label }}</span
+        >
+        <span class="ft12"> {{ getFieldValue(order, item.field) }}</span>
+      </el-col>
+      <el-col
+        v-for="item in rightOrderInfo"
+        :key="item.label"
+        :span="12"
+        :offset="0"
+      >
+        <span
+          class="ft12b"
+          style="
+            display: inline-block;
+            border: 1px solid black;
+            float: left;
+            width: 85px;
+            height: 14px;
+            text-align: center;
+          "
+          >{{ item.label }}</span
+        >
+        <span class="ft12"> {{ getFieldValue(order, item.field) }}</span>
+      </el-col>
+    </el-row>
+
     <!-- 甲乙方信息 与合同编号-->
-    <p style="top: 95px; left: 40px" class="ft12b">买方:</p>
+    <!-- <p style="top: 95px; left: 40px" class="ft12b">买方:</p>
     <p style="top: 95px; left: 100px" class="ft12b">
       {{ order.customer.name_chs }}
     </p>
@@ -121,7 +148,7 @@ const order = ref<infTypes.OrderData>({
     <p style="top: 135px; left: 560px" class="ft12b">SAP No：</p>
     <p style="top: 135px; left: 620px" class="ft12">
       {{ order.customer.sap_no }}
-    </p>
+    </p> -->
 
     <!-- 产品列表 -->
     <p style="top: 170px; left: 40px; font-size: 12px">
