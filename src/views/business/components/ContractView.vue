@@ -74,7 +74,7 @@ const form = ref<infTypes.OrderData>({
   order_term: {} as infTypes.OrderTerm
 });
 const clearProduct = (item: infTypes.OrderItemData) => {
-  // orderItems.value.splice(orderItems.value.indexOf(item), 1);
+  form.value.order_items.splice(form.value.order_items.indexOf(item), 1);
 };
 const genOrderNo = () => {
   if (!form.value.bu_code || !form.value.user_id) {
@@ -452,9 +452,12 @@ const onSubmit = () => {
                 <el-col :span="3" :offset="0"
                   ><el-text
                     :type="
-                      fmtPriceTextStyle(item.price_rounded, item.limit_price)
+                      fmtPriceTextStyle(
+                        item.price_rounded,
+                        item.product.limit_price
+                      )
                     "
-                    >{{ item.limit_price }}</el-text
+                    >{{ item.product.limit_price }}</el-text
                   ></el-col
                 >
               </template>
