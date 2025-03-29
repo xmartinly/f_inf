@@ -4,6 +4,7 @@ defineOptions({
 });
 import { ref, onMounted } from "vue";
 import { AppRequest } from "@/api/record";
+import * as fileOperation from "@/api/file";
 import { FileInfo } from "@/api/types";
 import { bussOptions } from "@/utils/options";
 import { Plus, Search, Delete } from "@element-plus/icons-vue";
@@ -18,15 +19,6 @@ import { useRouter } from "vue-router";
 import inficon from "@/assets/inficon.png";
 import { getIcons } from "@/utils/helper";
 
-const keyword = ref("");
-const search_type = ref(-1);
-const tableData = ref([]);
-const tableInfo = ref([]);
-const loading = ref(false);
-const uploadVisible = ref(false);
-const uploadLoading = ref(false);
-const router = useRouter();
-
 onMounted(() => {
   const _request = new AppRequest("order");
   _request.appRequest("index", {}, "").then(({ data }) => {
@@ -35,14 +27,27 @@ onMounted(() => {
   });
 });
 
+const keyword = ref("");
+const search_type = ref(-1);
+const tableData = ref([]);
+const tableInfo = ref([]);
+const loading = ref(false);
+const uploadVisible = ref(false);
+const uploadLoading = ref(false);
+const router = useRouter();
 const fileList = ref([] as FileInfo[]);
 const upload = ref<UploadInstance>();
+const fileInfo = ref({
+  id: 0,
+  order_id: 0,
+  descp: "合同"
+});
 
 const tableRowClass = () => {
   return "success-row";
 };
 const uploadSuccess = ({ data }: any) => {
-  message(data.name + " 上传成功.", { type: "success" });
+  message(data + " 上传成功.", { type: "success" });
   fileList.value.push(data);
   uploadLoading.value = false;
 };
@@ -53,20 +58,28 @@ const handleExceed: UploadProps["onExceed"] = files => {
   upload.value!.handleStart(file);
 };
 const downloadFile = (id: number | string) => {
-  console.log(id);
+  fileOperation.downloadFile(id);
 };
 const deleteFile = (id: number | string) => {
-  console.log(id);
+  fileOperation.delFile(id).then(({ data }) => {
+    message(data + " 删除成功.", { type: "success" });
+    fileList.value = fileList.value.filter((file: any) => file.id !== id);
+  });
 };
 const submitUpload = () => {
   uploadLoading.value = true;
   upload.value!.submit();
 };
+const uploadFile = (options: any) => {
+  return fileOperation.addFile(options);
+};
 
 const btnClick = (data: any, action: string) => {
-  console.log(uploadVisible.value);
   if (action == "upload") {
-    console.log(data.id);
+    fileInfo.value.order_id = data.id as number;
+    fileList.value = tableData.value.find(
+      item => item.id === data.id
+    ).order_files;
     uploadVisible.value = true;
     return;
   }
@@ -201,7 +214,7 @@ const search = () => {};
 
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-input placeholder="文件描述" />
+          <el-input v-model="fileInfo.descp" placeholder="文件描述" />
         </el-col>
 
         <el-col :span="6" style="text-align: right">
@@ -210,9 +223,13 @@ const search = () => {};
             :limit="1"
             action=""
             :auto-upload="false"
+            :http-request="uploadFile"
             :on-exceed="handleExceed"
             :on-success="uploadSuccess"
-            :data="{ id: fId, type: uldType, descp: uldDescp }"
+            :data="{
+              order_id: fileInfo.order_id,
+              descp: fileInfo.descp
+            }"
           >
             <template #trigger>
               <el-button type="primary">选取文件</el-button>
@@ -230,7 +247,7 @@ const search = () => {};
         <el-table-column prop="name" label="文件名" min-width="50%">
           <template #default="scope">
             <el-text>
-              <svg-icon :icon-class="scope.row.type" size="15px" />
+              <!-- <svg-icon :icon-class="scope.row.type" size="15px" /> -->
               <el-button
                 v-if="scope.row.id"
                 link
