@@ -12,6 +12,14 @@ export type TableResult = {
   };
 };
 
+export type FileInfo = {
+  order_id: number | string;
+  name: string;
+  path: string;
+  descp: string;
+  size: number;
+};
+
 // 定义产品数据类型
 export type ProductData = {
   id?: number;

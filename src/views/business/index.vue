@@ -4,8 +4,16 @@ defineOptions({
 });
 import { ref, onMounted } from "vue";
 import { AppRequest } from "@/api/record";
+import { FileInfo } from "@/api/types";
 import { bussOptions } from "@/utils/options";
-import { Plus, Search } from "@element-plus/icons-vue";
+import { Plus, Search, Delete } from "@element-plus/icons-vue";
+import {
+  genFileId,
+  UploadInstance,
+  UploadProps,
+  UploadRawFile
+} from "element-plus";
+import { message } from "@/utils/message";
 import { useRouter } from "vue-router";
 import inficon from "@/assets/inficon.png";
 import { getIcons } from "@/utils/helper";
@@ -15,24 +23,51 @@ const search_type = ref(-1);
 const tableData = ref([]);
 const tableInfo = ref([]);
 const loading = ref(false);
+const uploadVisible = ref(false);
+const uploadLoading = ref(false);
 const router = useRouter();
 
 onMounted(() => {
   const _request = new AppRequest("order");
-  const _key = keyword.value == "" ? keyword.value : "0";
   _request.appRequest("index", {}, "").then(({ data }) => {
     tableData.value = data.tableData;
     tableInfo.value = data.props;
   });
 });
 
+const fileList = ref([] as FileInfo[]);
+const upload = ref<UploadInstance>();
+
 const tableRowClass = () => {
   return "success-row";
 };
+const uploadSuccess = ({ data }: any) => {
+  message(data.name + " 上传成功.", { type: "success" });
+  fileList.value.push(data);
+  uploadLoading.value = false;
+};
+const handleExceed: UploadProps["onExceed"] = files => {
+  upload.value!.clearFiles();
+  const file = files[0] as UploadRawFile;
+  file.uid = genFileId();
+  upload.value!.handleStart(file);
+};
+const downloadFile = (id: number | string) => {
+  console.log(id);
+};
+const deleteFile = (id: number | string) => {
+  console.log(id);
+};
+const submitUpload = () => {
+  uploadLoading.value = true;
+  upload.value!.submit();
+};
+
 const btnClick = (data: any, action: string) => {
-  console.log(action);
-  if (action == "del") {
-    // router.push({ name: "Contract", query: { id: data.id } });
+  console.log(uploadVisible.value);
+  if (action == "upload") {
+    console.log(data.id);
+    uploadVisible.value = true;
     return;
   }
 
@@ -151,6 +186,76 @@ const search = () => {};
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog
+      v-model="uploadVisible"
+      title="文件上传"
+      width="30%"
+      @close="uploadVisible = false"
+    >
+      <template #header>
+        <div class="my-header">
+          <h4>文件上传</h4>
+        </div>
+      </template>
+
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-input placeholder="文件描述" />
+        </el-col>
+
+        <el-col :span="6" style="text-align: right">
+          <el-upload
+            ref="upload"
+            :limit="1"
+            action=""
+            :auto-upload="false"
+            :on-exceed="handleExceed"
+            :on-success="uploadSuccess"
+            :data="{ id: fId, type: uldType, descp: uldDescp }"
+          >
+            <template #trigger>
+              <el-button type="primary">选取文件</el-button>
+            </template>
+          </el-upload>
+        </el-col>
+
+        <el-col :span="6" style="text-align: right">
+          <el-button type="success" @click="submitUpload">上传</el-button>
+        </el-col>
+      </el-row>
+
+      <el-table :data="fileList" style="width: 100%">
+        <el-table-column prop="descp" label="描述" min-width="30%" />
+        <el-table-column prop="name" label="文件名" min-width="50%">
+          <template #default="scope">
+            <el-text>
+              <svg-icon :icon-class="scope.row.type" size="15px" />
+              <el-button
+                v-if="scope.row.id"
+                link
+                small
+                type="primary"
+                :title="scope.row.name"
+                @click="downloadFile(scope.row.id)"
+              >
+                {{ scope.row.name }}
+              </el-button>
+            </el-text>
+          </template>
+        </el-table-column>
+        <el-table-column prop="address" label="操作" min-width="20%">
+          <template #default="scope">
+            <el-button
+              type="danger"
+              link
+              :icon="Delete"
+              @click="deleteFile(scope.row.id)"
+            />
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </el-card>
 </template>
 
