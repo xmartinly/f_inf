@@ -22,15 +22,6 @@ export default {
         title: "客户",
         icon: "material-symbols:home-work-outline-rounded"
       }
-    },
-    {
-      path: "/information/contact",
-      name: "Contact",
-      component: () => import("@/views/information/contact.vue"),
-      meta: {
-        title: "联系人",
-        icon: "material-symbols:contact-mail-outline-rounded"
-      }
     }
   ]
 };

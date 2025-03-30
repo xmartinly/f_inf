@@ -109,7 +109,7 @@ const btnClick = (data: OrderData, action: string) => {
     });
   }
   if (action == "del") {
-    _request.appRequest("del", params, "").then(({ data }) => {
+    _request.appRequest("del", {}, params.id).then(({ data }) => {
       message(data.comment + " 删除成功.", { type: "success" });
     });
   }

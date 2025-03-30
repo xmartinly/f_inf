@@ -149,8 +149,9 @@ const getFieldValue = (obj: any, path: string) => {
 };
 
 onMounted(() => {
-  // setTimeout(window.print, 3000);
-  // setTimeout(closeWindow, 5000);
+  // setTimeout(startObserving, 2000);
+  setTimeout(window.print, 3000);
+  setTimeout(window.close, 5000);
 });
 const order = ref<OrderInfo>({
   id: 0,
@@ -201,7 +202,7 @@ const order = ref<OrderInfo>({
           v-for="item in orderInfo"
           :key="item.idx"
           style="
-            font-size: 12px;
+            font-size: 11px;
             width: 100%;
             z-index: -1;
             table-layout: fixed;
@@ -209,13 +210,13 @@ const order = ref<OrderInfo>({
           "
         >
           <tr>
-            <td style="border-spacing: 0; width: 65px" class="ft12b">
+            <td style="border-spacing: 0; width: 65px" class="ft11b">
               {{ item.label1 }}
             </td>
             <td style="border-spacing: 0; width: 390px">
               {{ getFieldValue(order, item.field1) }}
             </td>
-            <td style="border-spacing: 0; width: 60px" class="ft12b">
+            <td style="border-spacing: 0; width: 60px" class="ft11b">
               {{ item.label2 }}
             </td>
             <td style="border-spacing: 0; width: 120px">
@@ -228,14 +229,17 @@ const order = ref<OrderInfo>({
       <!-- 产品列表 -->
       <el-row style="margin-top: 5px">
         <el-col :span="24" :offset="0">
-          <span style="font-size: 12px"
+          <span style="font-size: 11px"
             >在此买方确认购买所需设备、备件, 并接受如下购买条件：</span
           >
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24" :offset="0" style="min-height: 4.5cm">
-          <table style="width: 100%; text-align: center; font-size: 13px">
+        <el-col :span="24" :offset="0" style="min-height: 6.2cm">
+          <table
+            id="prod_table"
+            style="width: 100%; text-align: center; font-size: 11px"
+          >
             <thead>
               <tr style="text-decoration: underline">
                 <th class="table-border">序号</th>
@@ -323,10 +327,10 @@ const order = ref<OrderInfo>({
         </el-col>
       </el-row>
       <div
-        v-if="order.order_items.length > 4"
+        v-if="order.order_items.length > 8"
         style="page-break-after: always; margin-top: 10mm"
       >
-        <span class="ft12b">合同条款及公司信息见下页</span>
+        <span class="ft11b">合同条款及公司信息见下页</span>
       </div>
       <!-- 条款 -->
       <el-row v-if="order.order_term">
@@ -337,9 +341,9 @@ const order = ref<OrderInfo>({
           :offset="0"
         >
           <div>
-            <span class="ft12b">{{ item.label }}</span>
+            <span class="ft11b">{{ item.label }}</span>
             <br v-if="item.newLine" />
-            <span class="ft12"> {{ getFieldValue(order, item.field) }}</span>
+            <span class="ft11"> {{ getFieldValue(order, item.field) }}</span>
           </div>
         </el-col>
       </el-row>
@@ -347,7 +351,7 @@ const order = ref<OrderInfo>({
       <!-- 页尾 -->
       <el-row>
         <el-col :span="24" :offset="0">
-          <table style="font-size: 12px; width: 100%; z-index: -1">
+          <table style="font-size: 11px; width: 100%; z-index: -1">
             <tr style="font-weight: bold">
               <td style="width: 75px">买方：</td>
               <td style="width: 300px">{{ order.customer.name_chs }}</td>
@@ -432,16 +436,16 @@ table {
   border-spacing: 0;
 }
 
-.ft12 {
-  font-size: 12px;
+.ft11 {
+  font-size: 11px;
   white-space: pre-wrap;
 }
 .ft10 {
   font-size: 10px;
 }
-.ft12b {
+.ft11b {
   font-weight: bold;
-  font-size: 12px;
+  font-size: 11px;
 }
 .table-border {
   border: 1px solid black;

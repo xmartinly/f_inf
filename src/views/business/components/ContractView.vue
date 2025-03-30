@@ -39,6 +39,7 @@ onMounted(() => {
           data.contacts as infTypes.UserData[]
         );
         selCustomer(data.customer as infTypes.CustomerData);
+        selStatus(data.status as string);
       }
     });
   } else {
@@ -119,6 +120,11 @@ const selProduct = (
   item_row.amount =
     item_row.quantity * item_row.product.list_price * (item_row.discount / 100);
 };
+const selStatus = (status: string) => {
+  form.value.status = statusOptions.find(option => option.label === status)[
+    "value"
+  ];
+};
 const selCustomer = (item: infTypes.CustomerData) => {
   form.value.customer_id = item.id;
   if (item.contacts.length > 0) {
@@ -171,7 +177,8 @@ const onSubmit = () => {
   _request
     .appRequest(action, form.value, form.value.id)
     .then(({ data, status }) => {
-      message(data, { type: status });
+      message(data.order_no + " 保存成功. 3秒后返回主页", { type: status });
+      setTimeout(goBack, 3000);
     });
 };
 </script>
