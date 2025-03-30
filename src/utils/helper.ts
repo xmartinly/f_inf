@@ -7,7 +7,8 @@ import {
   Finished,
   Edit,
   ChatDotSquare,
-  Upload
+  Upload,
+  Files
 } from "@element-plus/icons-vue";
 
 const getIcons = (icon_text: string) => {
@@ -30,6 +31,9 @@ const getIcons = (icon_text: string) => {
       break;
     case "Upload":
       icon = Upload;
+      break;
+    case "Files":
+      icon = Files;
       break;
     case "Finished":
       icon = Finished;

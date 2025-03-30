@@ -17,6 +17,7 @@ interface OrderInfo extends infTypes.OrderData {
   seller_bank: string;
   seller_bank_no: string;
 }
+
 onBeforeMount(() => {
   if (route.query.id == undefined) {
     return;
@@ -30,13 +31,30 @@ onBeforeMount(() => {
     window.document.title = order.value.order_no;
   });
 });
+
 const orderInfo = ref([
-  { label: "买方：", field: "customer.name_chs", float: "left" },
-  { label: "合同号：", field: "order_no", float: "right" },
-  { label: "卖方：", field: "seller", float: "left" },
-  { label: "日期：", field: "in_date", float: "right" },
-  { label: "最终用户：", field: "end_user", float: "left" },
-  { label: "SAP No：", field: "customer.sap_no", float: "right" }
+  {
+    label1: "买方：",
+    field1: "customer.name_chs",
+    label2: "合同号：",
+    field2: "order_no",
+    idx: 1
+  },
+
+  {
+    label1: "卖方：",
+    field1: "seller",
+    label2: "日期：",
+    field2: "in_date",
+    idx: 2
+  },
+  {
+    label1: "最终用户：",
+    field1: "end_user",
+    label2: "SAP No：",
+    field2: "customer.sap_no",
+    idx: 3
+  }
 ]);
 
 const footerInfo = ref([
@@ -178,23 +196,34 @@ const order = ref<OrderInfo>({
       </el-row>
 
       <!-- 合同信息 -->
-      <el-row v-if="order.customer.name_chs" justify="space-between">
-        <el-col
+      <template v-if="order.customer.name_chs">
+        <table
           v-for="item in orderInfo"
-          :key="item.label"
-          :span="12"
-          :offset="0"
+          :key="item.idx"
+          style="
+            font-size: 12px;
+            width: 100%;
+            z-index: -1;
+            table-layout: fixed;
+            border: none;
+          "
         >
-          <div>
-            <span
-              class="ft12b"
-              style="display: inline-block; width: 85px; height: 14px"
-              >{{ item.label }}</span
-            >
-            <span class="ft12"> {{ getFieldValue(order, item.field) }}</span>
-          </div>
-        </el-col>
-      </el-row>
+          <tr>
+            <td style="border-spacing: 0; width: 65px" class="ft12b">
+              {{ item.label1 }}
+            </td>
+            <td style="border-spacing: 0; width: 390px">
+              {{ getFieldValue(order, item.field1) }}
+            </td>
+            <td style="border-spacing: 0; width: 60px" class="ft12b">
+              {{ item.label2 }}
+            </td>
+            <td style="border-spacing: 0; width: 120px">
+              {{ getFieldValue(order, item.field2) }}
+            </td>
+          </tr>
+        </table>
+      </template>
 
       <!-- 产品列表 -->
       <el-row style="margin-top: 5px">
@@ -205,7 +234,7 @@ const order = ref<OrderInfo>({
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24" :offset="0">
+        <el-col :span="24" :offset="0" style="min-height: 4.5cm">
           <table style="width: 100%; text-align: center; font-size: 13px">
             <thead>
               <tr style="text-decoration: underline">
@@ -293,6 +322,12 @@ const order = ref<OrderInfo>({
           </table>
         </el-col>
       </el-row>
+      <div
+        v-if="order.order_items.length > 4"
+        style="page-break-after: always; margin-top: 10mm"
+      >
+        <span class="ft12b">合同条款及公司信息见下页</span>
+      </div>
       <!-- 条款 -->
       <el-row v-if="order.order_term">
         <el-col
@@ -385,7 +420,7 @@ const order = ref<OrderInfo>({
     right: 0;
     height: 20mm; /* 底部元素高度 */
     text-align: left;
-    padding: 5mm;
+    padding: 5mm 0mm;
   }
 }
 .content {

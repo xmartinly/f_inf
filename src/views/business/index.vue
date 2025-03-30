@@ -5,7 +5,7 @@ defineOptions({
 import { ref, onMounted } from "vue";
 import { AppRequest } from "@/api/record";
 import * as fileOperation from "@/api/file";
-import { FileInfo } from "@/api/types";
+import { FileInfo, OrderData } from "@/api/types";
 import { bussOptions } from "@/utils/options";
 import { Plus, Search, Delete } from "@element-plus/icons-vue";
 import {
@@ -47,9 +47,10 @@ const tableRowClass = () => {
   return "success-row";
 };
 const uploadSuccess = ({ data }: any) => {
-  message(data + " 上传成功.", { type: "success" });
+  message(data.name + " 上传成功.", { type: "success" });
   fileList.value.push(data);
   uploadLoading.value = false;
+  // fileList.value.push(data);
 };
 const handleExceed: UploadProps["onExceed"] = files => {
   upload.value!.clearFiles();
@@ -74,7 +75,7 @@ const uploadFile = (options: any) => {
   return fileOperation.addFile(options);
 };
 
-const btnClick = (data: any, action: string) => {
+const btnClick = (data: OrderData, action: string) => {
   if (action == "upload") {
     fileInfo.value.order_id = data.id as number;
     fileList.value = tableData.value.find(
@@ -91,6 +92,10 @@ const btnClick = (data: any, action: string) => {
   params.id = data.id as number;
 
   if (action == "print") {
+    if (data.order_no == undefined || data.order_no == "") {
+      message("请先保存订单为合同并生成订单编号.", { type: "error" });
+      return;
+    }
     const routeData = router.resolve({
       path: "/orderpdf",
       query: params
