@@ -66,6 +66,7 @@ const { title, getLogo } = useNav();
       color: var(--pure-theme-sub-menu-active-text);
       text-overflow: ellipsis;
       white-space: nowrap;
+      color: #7f7f7f;
     }
   }
 }

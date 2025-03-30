@@ -82,87 +82,81 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="select-none">
-    <img :src="bg" class="wave" />
-    <div class="flex-c absolute right-5 top-3">
-      <!-- 主题 -->
-      <el-switch
-        v-model="dataTheme"
-        inline-prompt
-        :active-icon="dayIcon"
-        :inactive-icon="darkIcon"
-        @change="dataThemeChange"
-      />
-    </div>
-    <div class="login-container">
-      <div class="img">
-        <component :is="toRaw(illustration)" />
-      </div>
-      <div class="login-box">
-        <div class="login-form">
-          <avatar class="avatar" />
-          <Motion>
-            <h2 class="outline-none">{{ title }}</h2>
-          </Motion>
-
-          <el-form
-            ref="ruleFormRef"
-            :model="ruleForm"
-            :rules="loginRules"
-            size="large"
+  <div class="login-container">
+    <div class="login-form">
+      <Motion>
+        <h2 style="color: #f9f9f9">{{ title }}</h2>
+      </Motion>
+      <el-form
+        ref="ruleFormRef"
+        :model="ruleForm"
+        :rules="loginRules"
+        size="large"
+      >
+        <Motion :delay="100">
+          <el-form-item
+            :rules="[
+              {
+                required: true,
+                message: '请输入邮箱',
+                trigger: 'blur'
+              }
+            ]"
+            prop="email"
           >
-            <Motion :delay="100">
-              <el-form-item
-                :rules="[
-                  {
-                    required: true,
-                    message: '请输入邮箱',
-                    trigger: 'blur'
-                  }
-                ]"
-                prop="email"
-              >
-                <el-input
-                  v-model="ruleForm.email"
-                  clearable
-                  placeholder="账号"
-                  :prefix-icon="useRenderIcon(User)"
-                />
-              </el-form-item>
-            </Motion>
+            <el-input
+              v-model="ruleForm.email"
+              clearable
+              placeholder="账号"
+              :prefix-icon="useRenderIcon(User)"
+            />
+          </el-form-item>
+        </Motion>
 
-            <Motion :delay="150">
-              <el-form-item prop="password">
-                <el-input
-                  v-model="ruleForm.password"
-                  clearable
-                  show-password
-                  placeholder="密码"
-                  :prefix-icon="useRenderIcon(Lock)"
-                />
-              </el-form-item>
-            </Motion>
+        <Motion :delay="150">
+          <el-form-item prop="password">
+            <el-input
+              v-model="ruleForm.password"
+              clearable
+              show-password
+              placeholder="密码"
+              :prefix-icon="useRenderIcon(Lock)"
+            />
+          </el-form-item>
+        </Motion>
 
-            <Motion :delay="250">
-              <el-button
-                class="w-full mt-4"
-                size="default"
-                type="primary"
-                :loading="loading"
-                @click="onLogin(ruleFormRef)"
-              >
-                登录
-              </el-button>
-            </Motion>
-          </el-form>
-        </div>
-      </div>
+        <Motion :delay="250">
+          <el-button
+            class="w-full mt-4"
+            size="default"
+            :loading="loading"
+            @click="onLogin(ruleFormRef)"
+          >
+            登录
+          </el-button>
+        </Motion>
+      </el-form>
     </div>
   </div>
 </template>
 
 <style scoped>
-@import url("@/style/login.css");
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  padding: 0 2rem;
+
+  background-image: url("@/assets/img/9.jpg");
+  z-index: -1;
+}
+
+.login-form {
+  width: 360px;
+  position: absolute;
+  right: 25%;
+  bottom: 30%;
+}
 </style>
 
 <style lang="scss" scoped>

@@ -110,7 +110,7 @@ export function useNav() {
 
   /** 获取`logo` */
   function getLogo() {
-    return new URL("/logo.svg", import.meta.url).href;
+    return new URL("/sun.svg", import.meta.url).href;
   }
 
   return {
@@ -137,6 +137,7 @@ export function useNav() {
     isCollapse,
     pureApp,
     useremail,
+
     tooltipEffect
   };
 }

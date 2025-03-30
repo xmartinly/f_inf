@@ -44,13 +44,13 @@ const { layout, device, logout, onPanel, pureApp, toggleSideBar } = useNav();
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span
+      <!-- <span
         class="set-icon navbar-bg-hover"
         title="打开系统配置"
         @click="onPanel"
       >
         <IconifyIconOffline :icon="Setting" />
-      </span>
+      </span> -->
     </div>
   </div>
 </template>
@@ -74,6 +74,7 @@ const { layout, device, logout, onPanel, pureApp, toggleSideBar } = useNav();
     justify-content: flex-end;
     min-width: 280px;
     height: 48px;
+    margin-right: 1rem;
     color: #000000d9;
 
     .el-dropdown-link {

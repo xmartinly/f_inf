@@ -197,7 +197,7 @@ const LayHeader = defineComponent({
       </el-scrollbar>
     </div>
     <!-- 系统设置 -->
-    <LaySetting />
+    <!-- <LaySetting /> -->
   </div>
 </template>
 

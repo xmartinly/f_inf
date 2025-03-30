@@ -29,7 +29,8 @@ const hideTabs = computed(() => {
 });
 
 const hideFooter = computed(() => {
-  return $storage?.configure.hideFooter;
+  return true;
+  // return $storage?.configure.hideFooter;
 });
 
 const stretch = computed(() => {
