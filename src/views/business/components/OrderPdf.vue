@@ -243,7 +243,7 @@ onBeforeMount(() => {
         <el-col :span="24" :offset="0" style="min-height: 6.2cm">
           <table
             ref="prodTableRef"
-            style="width: 100%; text-align: center; font-size: 11px"
+            style="width: 99%; text-align: center; font-size: 11px"
           >
             <thead>
               <tr style="text-decoration: underline">
@@ -356,7 +356,7 @@ onBeforeMount(() => {
       <!-- 页尾 -->
       <el-row>
         <el-col :span="24" :offset="0">
-          <table style="font-size: 11px; width: 100%; z-index: -1">
+          <table style="font-size: 11px; width: 99%; z-index: -1">
             <tr style="font-weight: bold">
               <td style="width: 75px">买方：</td>
               <td style="width: 300px">{{ order.customer.name_chs }}</td>
