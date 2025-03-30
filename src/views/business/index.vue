@@ -19,14 +19,7 @@ import { useRouter } from "vue-router";
 import inficon from "@/assets/inficon.png";
 import { getIcons } from "@/utils/helper";
 
-onMounted(() => {
-  const _request = new AppRequest("order");
-  _request.appRequest("index", {}, "").then(({ data }) => {
-    tableData.value = data.tableData;
-    tableInfo.value = data.props;
-  });
-});
-
+const _request = new AppRequest("order");
 const keyword = ref("");
 const search_type = ref(-1);
 const tableData = ref([]);
@@ -41,6 +34,13 @@ const fileInfo = ref({
   id: 0,
   order_id: 0,
   descp: "合同"
+});
+
+onMounted(() => {
+  _request.appRequest("index", {}, "").then(({ data }) => {
+    tableData.value = data.tableData;
+    tableInfo.value = data.props;
+  });
 });
 
 const tableRowClass = () => {
@@ -101,10 +101,16 @@ const btnClick = (data: OrderData, action: string) => {
       query: params
     });
     window.open(routeData.href, "_blank");
-  } else {
+  }
+  if (action == "edit") {
     router.push({
       path: `/business/contract`,
       query: params
+    });
+  }
+  if (action == "del") {
+    _request.appRequest("del", params, "").then(({ data }) => {
+      message(data.comment + " 删除成功.", { type: "success" });
     });
   }
 };
