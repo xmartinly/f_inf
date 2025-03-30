@@ -88,7 +88,7 @@ const statusOptions = [
   },
   {
     value: "done",
-    label: "完成"
+    label: "已完成"
   }
 ];
 
@@ -103,12 +103,6 @@ const invoiceOptions = [
     value: 1,
     label: "已开票"
   }
-];
-
-const fileOptions = [
-  { id: 0, value: "business", label: "业务" },
-  { id: 2, value: "purchase", label: "采购" },
-  { id: 3, value: "others", label: "其它" }
 ];
 
 const bussOptions = [
@@ -146,7 +140,6 @@ const searchTypeOptions = [
 export {
   invoiceOptions,
   statusOptions,
-  fileOptions,
   currencyOptions,
   customerGroupOptions,
   searchTypeOptions,
