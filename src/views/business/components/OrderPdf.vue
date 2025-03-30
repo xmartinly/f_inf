@@ -2,7 +2,7 @@
 defineOptions({
   name: "OrderPdf"
 });
-import { ref, onMounted, onBeforeMount } from "vue";
+import { ref, onMounted, onBeforeMount, onUpdated, nextTick } from "vue";
 import type * as infTypes from "@/api/types";
 import { AppRequest } from "@/api/record";
 import { useRoute } from "vue-router";
@@ -10,6 +10,8 @@ import inficon from "@/assets/inficon.png";
 const requestType = ref("order");
 const route = useRoute();
 const orderId = ref(0);
+const prodTableRef = ref<HTMLTableElement | null>(null);
+const tableHeight = ref<number>(0);
 interface OrderInfo extends infTypes.OrderData {
   seller: string;
   seller_addr: string;
@@ -17,21 +19,32 @@ interface OrderInfo extends infTypes.OrderData {
   seller_bank: string;
   seller_bank_no: string;
 }
-
-onBeforeMount(() => {
-  if (route.query.id == undefined) {
-    return;
-  }
-  orderId.value = parseInt(route.query.id as string);
-  let _request = new AppRequest(requestType.value);
-  _request.appRequest("show", {}, orderId.value).then(({ data, status }) => {
-    if (status == "success") {
-      Object.assign(order.value, data as infTypes.OrderData);
-    }
-    window.document.title = order.value.order_no;
-  });
+const order = ref<OrderInfo>({
+  id: 0,
+  seller: "英福康（广州）真空仪器有限公司",
+  in_date: "",
+  done_date: "",
+  order_no: "",
+  bu_code: "VCP",
+  user_id: 0,
+  region: "",
+  customer_id: 0,
+  end_user: "",
+  end_user_region: "",
+  contact_id: null,
+  status: "quotation",
+  comment: "",
+  total_amount: 0,
+  user: {} as infTypes.UserData,
+  order_items: [] as infTypes.OrderItemData[],
+  customer: {} as infTypes.CustomerData,
+  contact: {} as infTypes.ContactData,
+  order_term: {} as infTypes.OrderTerm,
+  seller_addr: "广州市天河区林和中路188号恒源大厦附楼4楼",
+  seller_postcode: "510008",
+  seller_bank: "中国银行广州市天河支行",
+  seller_bank_no: "706857742351"
 });
-
 const orderInfo = ref([
   {
     label1: "买方：",
@@ -56,14 +69,12 @@ const orderInfo = ref([
     idx: 3
   }
 ]);
-
 const footerInfo = ref([
   { text: "英福康（广州）真空仪器有限公司", idx: 1 },
   { text: "中国广州市天河区林和中路188号恒源大厦附楼4楼", idx: 2 },
   { text: "邮编：510610 服务热线：400 800 6826", idx: 3 },
   { text: "电话：+86 20 8723 6889 传真：+86 20 8723 6003", idx: 4 }
 ]);
-
 const bankInfo = ref([
   {
     label1: "地址：",
@@ -112,7 +123,6 @@ const bankInfo = ref([
     idx: 6
   }
 ]);
-
 const termsInfo = ref([
   {
     label: "一、制造厂家及国别：",
@@ -147,37 +157,32 @@ const termsInfo = ref([
 const getFieldValue = (obj: any, path: string) => {
   return path.split(".").reduce((o, p) => (o || {})[p], obj);
 };
-
+const updateTableHeight = async () => {
+  await nextTick();
+  if (prodTableRef.value) {
+    tableHeight.value = prodTableRef.value.clientHeight;
+  }
+  console.log(tableHeight.value);
+};
+// onUpdated(() => updateTableHeight());
 onMounted(() => {
-  // setTimeout(startObserving, 2000);
+  // updateTableHeight();
   setTimeout(window.print, 3000);
   setTimeout(window.close, 5000);
+  setTimeout(updateTableHeight, 1000);
 });
-const order = ref<OrderInfo>({
-  id: 0,
-  seller: "英福康（广州）真空仪器有限公司",
-  in_date: "",
-  done_date: "",
-  order_no: "",
-  bu_code: "VCP",
-  user_id: 0,
-  region: "",
-  customer_id: 0,
-  end_user: "",
-  end_user_region: "",
-  contact_id: null,
-  status: "quotation",
-  comment: "",
-  total_amount: 0,
-  user: {} as infTypes.UserData,
-  order_items: [] as infTypes.OrderItemData[],
-  customer: {} as infTypes.CustomerData,
-  contact: {} as infTypes.ContactData,
-  order_term: {} as infTypes.OrderTerm,
-  seller_addr: "广州市天河区林和中路188号恒源大厦附楼4楼",
-  seller_postcode: "510008",
-  seller_bank: "中国银行广州市天河支行",
-  seller_bank_no: "706857742351"
+onBeforeMount(() => {
+  if (route.query.id == undefined) {
+    return;
+  }
+  orderId.value = parseInt(route.query.id as string);
+  let _request = new AppRequest(requestType.value);
+  _request.appRequest("show", {}, orderId.value).then(({ data, status }) => {
+    if (status == "success") {
+      Object.assign(order.value, data as infTypes.OrderData);
+    }
+    window.document.title = order.value.order_no;
+  });
 });
 </script>
 
@@ -237,7 +242,7 @@ const order = ref<OrderInfo>({
       <el-row>
         <el-col :span="24" :offset="0" style="min-height: 6.2cm">
           <table
-            id="prod_table"
+            ref="prodTableRef"
             style="width: 100%; text-align: center; font-size: 11px"
           >
             <thead>
@@ -327,7 +332,7 @@ const order = ref<OrderInfo>({
         </el-col>
       </el-row>
       <div
-        v-if="order.order_items.length > 8"
+        v-if="tableHeight > 240"
         style="page-break-after: always; margin-top: 10mm"
       >
         <span class="ft11b">合同条款及公司信息见下页</span>
