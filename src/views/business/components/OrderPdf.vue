@@ -244,7 +244,7 @@ onBeforeMount(() => {
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24" :offset="0" style="min-height: 5cm">
+        <el-col :span="24" :offset="0" style="min-height: 6.2cm">
           <table
             ref="prodTableRef"
             style="width: 99%; text-align: center; font-size: 11px"
@@ -336,7 +336,7 @@ onBeforeMount(() => {
         </el-col>
       </el-row>
       <div
-        v-if="contentHeight > 740"
+        v-if="contentHeight > 700"
         style="page-break-after: always; margin-top: 10mm"
       >
         <span class="ft11b">合同条款及公司信息见下页</span>
