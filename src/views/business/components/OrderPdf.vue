@@ -11,7 +11,10 @@ const requestType = ref("order");
 const route = useRoute();
 const orderId = ref(0);
 const prodTableRef = ref<HTMLTableElement | null>(null);
+const termsDivRef = ref<HTMLDivElement | null>(null);
 const tableHeight = ref<number>(0);
+const termsHeight = ref<number>(0);
+const contentHeight = ref<number>(0);
 interface OrderInfo extends infTypes.OrderData {
   seller: string;
   seller_addr: string;
@@ -157,19 +160,20 @@ const termsInfo = ref([
 const getFieldValue = (obj: any, path: string) => {
   return path.split(".").reduce((o, p) => (o || {})[p], obj);
 };
-const updateTableHeight = async () => {
+const updateContentHeight = async () => {
   await nextTick();
   if (prodTableRef.value) {
     tableHeight.value = prodTableRef.value.clientHeight;
   }
-  console.log(tableHeight.value);
+  if (termsDivRef.value) {
+    termsHeight.value = termsDivRef.value.clientHeight;
+  }
+  contentHeight.value = tableHeight.value + termsHeight.value;
 };
-// onUpdated(() => updateTableHeight());
 onMounted(() => {
-  // updateTableHeight();
   setTimeout(window.print, 3000);
   setTimeout(window.close, 5000);
-  setTimeout(updateTableHeight, 1000);
+  setTimeout(updateContentHeight, 1000);
 });
 onBeforeMount(() => {
   if (route.query.id == undefined) {
@@ -240,7 +244,7 @@ onBeforeMount(() => {
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="24" :offset="0" style="min-height: 6.2cm">
+        <el-col :span="24" :offset="0" style="min-height: 5cm">
           <table
             ref="prodTableRef"
             style="width: 99%; text-align: center; font-size: 11px"
@@ -332,26 +336,28 @@ onBeforeMount(() => {
         </el-col>
       </el-row>
       <div
-        v-if="tableHeight > 240"
+        v-if="contentHeight > 740"
         style="page-break-after: always; margin-top: 10mm"
       >
         <span class="ft11b">合同条款及公司信息见下页</span>
       </div>
       <!-- 条款 -->
-      <el-row v-if="order.order_term">
-        <el-col
-          v-for="item in termsInfo"
-          :key="item.label"
-          :span="24"
-          :offset="0"
-        >
-          <div>
-            <span class="ft11b">{{ item.label }}</span>
-            <br v-if="item.newLine" />
-            <span class="ft11"> {{ getFieldValue(order, item.field) }}</span>
-          </div>
-        </el-col>
-      </el-row>
+      <div ref="termsDivRef">
+        <el-row v-if="order.order_term" ref="termTableRef">
+          <el-col
+            v-for="item in termsInfo"
+            :key="item.label"
+            :span="24"
+            :offset="0"
+          >
+            <div>
+              <span class="ft11b">{{ item.label }}</span>
+              <br v-if="item.newLine" />
+              <span class="ft11"> {{ getFieldValue(order, item.field) }}</span>
+            </div>
+          </el-col>
+        </el-row>
+      </div>
 
       <!-- 页尾 -->
       <el-row>

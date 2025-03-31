@@ -426,7 +426,7 @@ const onSubmit = () => {
                 <el-text class="mx-1">{{ form.in_date }}</el-text>
               </el-col>
               <el-col :span="6" :offset="0">
-                <el-text class="mx-1">{{ form.order_no || "n/a" }}</el-text>
+                <el-input v-model="form.order_no" style="width: 180px" />
               </el-col>
             </el-row>
             <el-divider content-position="left">
