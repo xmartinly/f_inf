@@ -1,12 +1,39 @@
 <script setup lang="ts">
 import { useNav } from "@/layout/hooks/useNav";
 import LayNavMix from "../lay-sidebar/NavMix.vue";
+import { ref } from "vue";
 import LaySidebarBreadCrumb from "../lay-sidebar/components/SidebarBreadCrumb.vue";
 import LaySidebarTopCollapse from "../lay-sidebar/components/SidebarTopCollapse.vue";
 import { useUserStoreHook } from "@/store/modules/user";
 
 import LogoutCircleRLine from "@iconify-icons/ri/logout-circle-r-line";
 import Setting from "@iconify-icons/ri/settings-3-line";
+import { changePasswd } from "@/api/user";
+import { message } from "@/utils/message";
+
+const showPasswdDialog = ref(false);
+const password = ref({
+  passwd_old: "",
+  passwd_new: "",
+  id: useUserStoreHook().id
+});
+const changePasswdHandle = async () => {
+  // console.log(useUserStoreHook().id);
+
+  const { passwd_old, passwd_new } = password.value;
+  if (passwd_old === "" || passwd_new === "") {
+    message("密码不能为空", { type: "error" });
+    return;
+  }
+
+  const res = await changePasswd(password.value);
+  if (res.code === 200) {
+    message("修改密码成功, 将于3秒后退出系统. 请重新登陆", { type: "success" });
+    setTimeout(() => {
+      logout();
+    }, 3000);
+  }
+};
 
 const { layout, device, logout, onPanel, pureApp, toggleSideBar } = useNav();
 </script>
@@ -34,6 +61,10 @@ const { layout, device, logout, onPanel, pureApp, toggleSideBar } = useNav();
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
+            <el-dropdown-item @click="showPasswdDialog = true">
+              <IconifyIconOffline :icon="Setting" style="margin: 5px" />
+              修改密码
+            </el-dropdown-item>
             <el-dropdown-item @click="logout">
               <IconifyIconOffline
                 :icon="LogoutCircleRLine"
@@ -44,14 +75,39 @@ const { layout, device, logout, onPanel, pureApp, toggleSideBar } = useNav();
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <!-- <span
-        class="set-icon navbar-bg-hover"
-        title="打开系统配置"
-        @click="onPanel"
-      >
-        <IconifyIconOffline :icon="Setting" />
-      </span> -->
     </div>
+    <!-- 改密码弹出框 -->
+    <el-dialog v-model="showPasswdDialog" title="修改密码" width="30%">
+      <el-form :model="password" label-width="80px">
+        <el-row :gutter="20">
+          <el-col :span="24" :offset="0">
+            <el-form-item label="旧密码" required>
+              <el-input v-model="password.passwd_old" clearable />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="24" :offset="0">
+            <el-form-item label="新密码" required>
+              <el-input v-model="password.passwd_new" clearable />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="20">
+          <el-col :span="24" style="text-align: right">
+            <el-space :size="30">
+              <el-button type="warning" @click="showPasswdDialog = false"
+                >取消</el-button
+              >
+              <el-button type="primary" @click="changePasswdHandle"
+                >保存</el-button
+              >
+            </el-space>
+          </el-col>
+        </el-row>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 

@@ -50,7 +50,7 @@ export const getInfo = () => {
   return http.request<UserResult>("get", baseUrlApi("users/info"));
 };
 export const changePasswd = (data?: object) => {
-  return http.request<any>("post", baseUrlApi("users/info"), { data });
+  return http.request<any>("post", baseUrlApi("users/password"), { data });
 };
 
 /** 刷新`token` */
