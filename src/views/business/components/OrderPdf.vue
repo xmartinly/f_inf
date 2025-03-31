@@ -2,7 +2,7 @@
 defineOptions({
   name: "OrderPdf"
 });
-import { ref, onMounted, onBeforeMount, onUpdated, nextTick } from "vue";
+import { ref, onMounted, onBeforeMount } from "vue";
 import type * as infTypes from "@/api/types";
 import { AppRequest } from "@/api/record";
 import { useRoute } from "vue-router";
@@ -10,11 +10,7 @@ import inficon from "@/assets/inficon.png";
 const requestType = ref("order");
 const route = useRoute();
 const orderId = ref(0);
-const prodTableRef = ref<HTMLTableElement | null>(null);
-const termsDivRef = ref<HTMLDivElement | null>(null);
-const tableHeight = ref<number>(0);
-const termsHeight = ref<number>(0);
-const contentHeight = ref<number>(0);
+
 interface OrderInfo extends infTypes.OrderData {
   seller: string;
   seller_addr: string;
@@ -48,35 +44,41 @@ const order = ref<OrderInfo>({
   seller_bank: "中国银行广州市天河支行",
   seller_bank_no: "706857742351"
 });
-const orderInfo = ref([
+const orderInfoLeft = ref([
   {
-    label1: "买方：",
-    field1: "customer.name_chs",
-    label2: "合同号：",
-    field2: "order_no",
+    label: "买方：",
+    field: "customer.name_chs",
+    idx: 1
+  },
+  {
+    label: "卖方：",
+    field: "seller",
+    idx: 2
+  },
+  {
+    label: "最终用户：",
+    field: "end_user",
+    idx: 3
+  }
+]);
+
+const orderInfoRight = ref([
+  {
+    label: "合同号：",
+    field: "order_no",
     idx: 1
   },
 
   {
-    label1: "卖方：",
-    field1: "seller",
-    label2: "日期：",
-    field2: "in_date",
+    label: "日期：",
+    field: "in_date",
     idx: 2
   },
   {
-    label1: "最终用户：",
-    field1: "end_user",
-    label2: "SAP No：",
-    field2: "customer.sap_no",
+    label: "SAP No：",
+    field: "customer.sap_no",
     idx: 3
   }
-]);
-const footerInfo = ref([
-  { text: "英福康（广州）真空仪器有限公司", idx: 1 },
-  { text: "中国广州市天河区林和中路188号恒源大厦附楼4楼", idx: 2 },
-  { text: "邮编：510610 服务热线：400 800 6826", idx: 3 },
-  { text: "电话：+86 20 8723 6889 传真：+86 20 8723 6003", idx: 4 }
 ]);
 const bankInfo = ref([
   {
@@ -160,20 +162,10 @@ const termsInfo = ref([
 const getFieldValue = (obj: any, path: string) => {
   return path.split(".").reduce((o, p) => (o || {})[p], obj);
 };
-const updateContentHeight = async () => {
-  await nextTick();
-  if (prodTableRef.value) {
-    tableHeight.value = prodTableRef.value.clientHeight;
-  }
-  if (termsDivRef.value) {
-    termsHeight.value = termsDivRef.value.clientHeight;
-  }
-  contentHeight.value = tableHeight.value + termsHeight.value;
-};
+
 onMounted(() => {
-  setTimeout(window.print, 3000);
-  setTimeout(window.close, 5000);
-  setTimeout(updateContentHeight, 1000);
+  // setTimeout(window.print, 3000);
+  // setTimeout(window.close, 5000);
 });
 onBeforeMount(() => {
   if (route.query.id == undefined) {
@@ -191,255 +183,314 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="a4-page">
-    <div class="content">
-      <el-row>
-        <el-col :span="23" :offset="1">
-          <el-image style="width: 200px; height: 45px" :src="inficon" />
-        </el-col>
-      </el-row>
-
-      <el-row>
-        <el-col :span="24" :offset="0" style="text-align: center">
-          <h3>&nbsp;英福康（广州）真空仪器有限公司销售合同&nbsp;</h3>
-        </el-col>
-      </el-row>
-
-      <!-- 合同信息 -->
-      <template v-if="order.customer.name_chs">
-        <table
-          v-for="item in orderInfo"
-          :key="item.idx"
-          style="
-            font-size: 11px;
-            width: 100%;
-            z-index: -1;
-            table-layout: fixed;
-            border: none;
-          "
-        >
-          <tr>
-            <td style="border-spacing: 0; width: 65px" class="ft11b">
-              {{ item.label1 }}
-            </td>
-            <td style="border-spacing: 0; width: 390px">
-              {{ getFieldValue(order, item.field1) }}
-            </td>
-            <td style="border-spacing: 0; width: 60px" class="ft11b">
-              {{ item.label2 }}
-            </td>
-            <td style="border-spacing: 0; width: 120px">
-              {{ getFieldValue(order, item.field2) }}
-            </td>
-          </tr>
-        </table>
-      </template>
+  <div class="main">
+    <div class="page-container">
+      <div class="logo">
+        <el-image
+          style="width: 200px; height: 45px; margin-left: 10px"
+          :src="inficon"
+        />
+      </div>
+      <h3 style="text-align: center">
+        &nbsp;英福康（广州）真空仪器有限公司销售合同&nbsp;
+      </h3>
+      <div v-if="order.customer.name_chs" class="info-section">
+        <div>
+          <table
+            v-for="item in orderInfoLeft"
+            :key="item.idx"
+            style="width: 100%; border: none"
+          >
+            <tr>
+              <td style="border-spacing: 0; width: 65px" class="ft12b">
+                {{ item.label }}
+              </td>
+              <td style="border-spacing: 0" class="ft12">
+                {{ getFieldValue(order, item.field) }}
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div>
+          <table
+            v-for="item in orderInfoRight"
+            :key="item.idx"
+            style="width: 100%; border: none"
+          >
+            <tr>
+              <td style="border-spacing: 0; width: 65px" class="ft12b">
+                {{ item.label }}
+              </td>
+              <td style="border-spacing: 0" class="ft12">
+                {{ getFieldValue(order, item.field) }}
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
 
       <!-- 产品列表 -->
-      <el-row style="margin-top: 5px">
-        <el-col :span="24" :offset="0">
-          <span style="font-size: 11px"
-            >在此买方确认购买所需设备、备件, 并接受如下购买条件：</span
-          >
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="24" :offset="0" style="min-height: 6.2cm">
-          <table
-            ref="prodTableRef"
-            style="width: 99%; text-align: center; font-size: 11px"
-          >
-            <thead>
-              <tr style="text-decoration: underline">
-                <th class="table-border">序号</th>
-                <th class="table-border">货号</th>
-                <th class="table-border">品名</th>
-                <th class="table-border">数量</th>
-                <th class="table-border">单价未税</th>
-                <th class="table-border">总价未税</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in order.order_items" :key="index">
-                <td class="table-border">
-                  {{ index + 1 }}
-                </td>
-                <td class="table-border">
-                  {{ item.product.pn }}
-                </td>
-                <td
-                  style="
-                    border: 1px solid black;
-                    border-spacing: 0;
-                    font-size: 11px;
-                  "
-                >
-                  {{ item.product.descp }}
-                </td>
-                <td style="border-spacing: 0; border: 1px solid black">
-                  {{ item.quantity }}
-                </td>
-                <td class="table-border">
-                  {{ item.price_rounded }}
-                </td>
-                <td class="table-border">
-                  {{ item.amount }}
-                </td>
-              </tr>
-            </tbody>
-            <tfoot style="text-align: left">
-              <tr>
-                <td
-                  colspan="5"
-                  style="
-                    border: 1px solid black;
-                    border-spacing: 0;
-                    text-align: right;
-                  "
-                >
-                  人民币未税总价：
-                </td>
-                <td
-                  style="
-                    text-align: center;
-                    border: 1px solid black;
-                    border-spacing: 0;
-                  "
-                >
-                  &nbsp;{{ order.total_amount }}
-                </td>
-              </tr>
-              <tr>
-                <td
-                  colspan="5"
-                  style="
-                    border: 1px solid black;
-                    border-spacing: 0;
-                    text-align: right;
-                    font-weight: bold;
-                  "
-                >
-                  中国大陆境内交货价人民币(含中国进口关税、13%增值税) ：
-                </td>
-                <td
-                  style="
-                    text-align: center;
-                    border: 1px solid black;
-                    border-spacing: 0;
-                  "
-                >
-                  &nbsp;{{ parseFloat(order.total_amount * 1.13).toFixed(2) }}
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </el-col>
-      </el-row>
-      <div
-        v-if="contentHeight > 640"
-        style="page-break-after: always; margin-top: 10mm"
+      <div class="product-list">
+        <span style="font-size: 12px"
+          >在此买方确认购买所需设备、备件, 并接受如下购买条件：</span
+        >
+        <table style="width: 99%; text-align: center; font-size: 12px">
+          <thead>
+            <tr style="text-decoration: underline">
+              <th class="table-border">序号</th>
+              <th class="table-border">货号</th>
+              <th class="table-border">品名</th>
+              <th class="table-border">数量</th>
+              <th class="table-border">单价未税</th>
+              <th class="table-border">总价未税</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in order.order_items" :key="index">
+              <td class="table-border">
+                {{ index + 1 }}
+              </td>
+              <td class="table-border">
+                {{ item.product.pn }}
+              </td>
+              <td
+                style="
+                  border: 1px solid black;
+                  border-spacing: 0;
+                  font-size: 11px;
+                "
+              >
+                {{ item.product.descp }}
+              </td>
+              <td style="border-spacing: 0; border: 1px solid black">
+                {{ item.quantity }}
+              </td>
+              <td class="table-border" style="text-align: right">
+                {{ item.price_rounded }}
+              </td>
+              <td class="table-border" style="text-align: right">
+                {{ item.amount }}
+              </td>
+            </tr>
+          </tbody>
+          <tfoot style="text-align: left">
+            <tr>
+              <td
+                colspan="5"
+                style="
+                  border: 1px solid black;
+                  border-spacing: 0;
+                  text-align: right;
+                "
+              >
+                人民币未税总价：
+              </td>
+              <td
+                style="
+                  text-align: right;
+                  border: 1px solid black;
+                  border-spacing: 0;
+                "
+              >
+                &nbsp;{{ order.total_amount }}
+              </td>
+            </tr>
+            <tr>
+              <td
+                colspan="5"
+                style="
+                  border: 1px solid black;
+                  border-spacing: 0;
+                  text-align: right;
+                  font-weight: bold;
+                "
+              >
+                中国大陆境内交货价人民币(含中国进口关税、13%增值税) ：
+              </td>
+              <td
+                style="
+                  text-align: right;
+                  border: 1px solid black;
+                  border-spacing: 0;
+                "
+              >
+                &nbsp;{{ parseFloat(order.total_amount * 1.13).toFixed(2) }}
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <span
+        class="ft12b"
+        style="position: absolute; bottom: 1.65cm; font-style: italic"
+        >合同条款及公司信息见下页</span
       >
-        <span class="ft11b">合同条款及公司信息见下页</span>
+      <div class="footer">
+        <hr />
+        <p>英福康（广州）真空仪器有限公司</p>
+        <p>中国广州市天河区林和中路188号恒源大厦附楼4楼</p>
+        <p>邮编：510610 服务热线：400 800 6826</p>
+        <p>电话：+86 20 8723 6889 传真：+86 20 8723 6003</p>
+      </div>
+    </div>
+
+    <div class="page-container">
+      <div class="logo">
+        <el-image
+          style="width: 200px; height: 45px; margin-left: 10px"
+          :src="inficon"
+        />
       </div>
       <!-- 条款 -->
-      <div ref="termsDivRef">
-        <el-row v-if="order.order_term" ref="termTableRef">
-          <el-col
-            v-for="item in termsInfo"
-            :key="item.label"
-            :span="24"
-            :offset="0"
-          >
-            <div>
-              <span class="ft11b">{{ item.label }}</span>
-              <br v-if="item.newLine" />
-              <span class="ft11"> {{ getFieldValue(order, item.field) }}</span>
-            </div>
-          </el-col>
-        </el-row>
+      <div v-if="order.order_term" class="content">
+        <div
+          v-for="item in termsInfo"
+          :key="item.label"
+          class="terms-and-conditions"
+        >
+          <div>
+            <span class="ft12b">{{ item.label }}</span>
+            <br v-if="item.newLine" />
+            <span class="ft12"> {{ getFieldValue(order, item.field) }}</span>
+          </div>
+        </div>
       </div>
 
-      <!-- 页尾 -->
-      <el-row>
-        <el-col :span="24" :offset="0">
-          <table style="font-size: 11px; width: 99%; z-index: -1">
-            <tr style="font-weight: bold">
-              <td style="width: 75px">买方：</td>
-              <td style="width: 300px">{{ order.customer.name_chs }}</td>
-              <td style="width: 70px">卖方：</td>
-              <td>英福康（广州）真空仪器有限公司</td>
+      <!-- 签名 -->
+      <div class="signature-area">
+        <table style="font-size: 12px; width: 99.5%; border: none">
+          <tr style="font-weight: bold">
+            <td style="width: 53px">买方：</td>
+            <td style="width: 240px">
+              {{ order.customer.name_chs }}
+            </td>
+            <td style="width: 43px">卖方：</td>
+            <td style="width: 200px">英福康（广州）真空仪器有限公司</td>
+          </tr>
+          <template v-for="item in bankInfo" :key="item.idx">
+            <tr>
+              <td>
+                {{ item.label1 }}
+              </td>
+              <td>
+                {{ getFieldValue(order, item.field1) }}
+              </td>
+              <td>
+                {{ item.label2 }}
+              </td>
+              <td>
+                {{ getFieldValue(order, item.field2) }}
+              </td>
             </tr>
-            <template v-for="item in bankInfo" :key="item.idx">
-              <tr>
-                <td style="border-spacing: 0">
-                  {{ item.label1 }}
-                </td>
-                <td style="border-spacing: 0">
-                  {{ getFieldValue(order, item.field1) }}
-                </td>
-                <td style="border-spacing: 0">
-                  {{ item.label2 }}
-                </td>
-                <td style="border-spacing: 0">
-                  {{ getFieldValue(order, item.field2) }}
-                </td>
-              </tr>
-            </template>
-          </table>
-        </el-col>
-      </el-row>
+          </template>
+        </table>
+      </div>
+
+      <div class="footer">
+        <hr />
+        <p>英福康（广州）真空仪器有限公司</p>
+        <p>中国广州市天河区林和中路188号恒源大厦附楼4楼</p>
+        <p>邮编：510610 服务热线：400 800 6826</p>
+        <p>电话：+86 20 8723 6889 传真：+86 20 8723 6003</p>
+      </div>
     </div>
-    <el-row class="footer">
-      <el-col v-for="item in footerInfo" :key="item.idx" :span="24" :offset="0">
-        <p class="ft10">{{ item.text }}</p>
-      </el-col>
-    </el-row>
   </div>
 </template>
 
 <style scoped lang="scss">
-.a4-page {
-  width: 210mm;
-  height: 297mm;
-  background: white;
-  margin: 0px auto;
-  padding: 12mm 15mm; /* 安全打印区域 */
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-  page-break-after: auto; /* 默认自动分页 */
+main {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-container {
+  width: 21cm; /* A4 paper width */
+  height: 29.7cm; /* A4 paper height */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+  background-color: white;
+  margin: 1cm;
+  float: left;
+  padding: 20px;
+}
+
+.logo {
+  height: 1.5cm;
+  line-height: 1.5cm;
+}
+
+.footer {
+  height: 1.6cm;
+  text-align: left;
+  font-size: 10px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.content {
+  padding-top: 1.5cm;
+  padding-bottom: 6cm; /* Adjusted to accommodate signature area and footer */
+  height: calc(
+    100% - 8.5cm
+  ); /* Total height minus logo, signature area, and footer */
+  display: flex;
+  flex-direction: column;
+}
+
+.info-section {
+  height: 2cm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-list {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.signature-area {
+  height: 6cm;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: absolute;
+  bottom: 1.65cm; /* Positioned above the footer */
+  width: 100%;
+}
+
+.terms-and-conditions {
+  flex-grow: 1;
 }
 
 @media print {
-  @page {
-    size: A4;
-    margin: 1cm; /* 最小安全边距 */
+  main {
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+    display: block;
   }
 
-  body {
-    margin: 0;
-    background: none;
-  }
-
-  .a4-page {
-    width: 100%;
-    // min-height: auto;
-    min-height: calc(297mm - 30mm - 24mm);
-    margin: 0;
+  .page-container {
     box-shadow: none;
     padding: 0;
+    margin: 0;
+    page-break-after: always;
   }
-  .footer {
-    position: fixed; /* 打印时固定在每页底部 */
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 20mm; /* 底部元素高度 */
-    text-align: left;
-    padding: 5mm 0mm;
+
+  .logo,
+  .footer,
+  .info-section,
+  .product-list,
+  .signature-area,
+  .terms-and-conditions {
+    break-inside: avoid;
   }
-}
-.content {
-  min-height: 230mm; /* 触发分页的阈值 */
 }
 
 table {
@@ -447,16 +498,16 @@ table {
   border-spacing: 0;
 }
 
-.ft11 {
-  font-size: 11px;
+.ft12 {
+  font-size: 12px;
   white-space: pre-wrap;
 }
 .ft10 {
   font-size: 10px;
 }
-.ft11b {
+.ft12b {
   font-weight: bold;
-  font-size: 11px;
+  font-size: 12px;
 }
 .table-border {
   border: 1px solid black;

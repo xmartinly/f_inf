@@ -41,6 +41,7 @@ watch(
   newVal => {
     if (newVal) {
       form.value = { ...newVal };
+      // form.value.customer_name = newVal.customer.name_chs;
     }
   },
   { immediate: true, deep: true }
@@ -83,7 +84,6 @@ const acCustomer = (key: string, cb: (arg: any) => void) => {
 
 const selCustomer = ({ model }: AcData) => {
   form.value.customer_id = model.id;
-  console.log(form.value);
 };
 </script>
 
