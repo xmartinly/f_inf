@@ -336,7 +336,7 @@ onBeforeMount(() => {
         </el-col>
       </el-row>
       <div
-        v-if="contentHeight > 700"
+        v-if="contentHeight > 640"
         style="page-break-after: always; margin-top: 10mm"
       >
         <span class="ft11b">合同条款及公司信息见下页</span>
