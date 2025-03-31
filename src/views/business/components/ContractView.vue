@@ -394,7 +394,7 @@ const onSubmit = () => {
               <el-col :span="6" :offset="0">
                 <el-text class="mx-1" tag="b"
                   >编号&nbsp;<el-button
-                    v-if="form.order_no.indexOf(form.region) < 0"
+                    v-if="form.order_no == null || form.order_no == ''"
                     type="primary"
                     text
                     style="margin-top: -2px"
