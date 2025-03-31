@@ -148,6 +148,14 @@ const selInput = (item: infTypes.AcData, item_row: any, type: string) => {
       break;
   }
 };
+const calcTotalAmountWT = () => {
+  let total = 0;
+  form.value.order_items.forEach(item => {
+    total += item.amount * 1;
+  });
+  return parseFloat((total * 1.13).toFixed(2)).toLocaleString();
+};
+
 // 计算单行货值
 const calculateAmount = (item: infTypes.OrderItemData) => {
   // 确保值为数字（处理空值或非法输入）
@@ -423,7 +431,11 @@ const onSubmit = () => {
             </el-row>
             <el-divider content-position="left">
               产品:&nbsp;
-              <el-text tag="b">{{ form.order_term.leadtime_term }}</el-text>
+              <el-text tag="b"
+                >{{ form.order_term.leadtime_term }}&nbsp; 含税总价:&nbsp;{{
+                  calcTotalAmountWT()
+                }}</el-text
+              >
             </el-divider>
             <el-row :gutter="10">
               <el-col
