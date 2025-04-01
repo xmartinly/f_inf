@@ -177,7 +177,7 @@ export const fmtContractTerms = [
     idx: "origin_term",
     row: 1,
     label: "一、制造厂家及国别：",
-    term: "INFICON LTD/列支敦士登"
+    term: "保证为原厂"
   },
   // 交货期
   {
@@ -185,7 +185,7 @@ export const fmtContractTerms = [
     idx: "leadtime_term",
     row: 1,
     label: "二、交货期：",
-    term: "无现货， 合同签订后16周。"
+    term: "无现货， 合同签订后 XXX 周。"
   },
   // 交货地点
   {
@@ -201,7 +201,7 @@ export const fmtContractTerms = [
     idx: "payment_term",
     row: 1,
     label: "四、付款与发票：",
-    term: "开具发票之日起30天内100%付款到英福康（广州）真空仪器有限公司的账户。"
+    term: "预付100%, 到货后开具发票并发货。"
   },
   // 质量保证
   {
