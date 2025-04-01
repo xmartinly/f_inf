@@ -164,8 +164,8 @@ const getFieldValue = (obj: any, path: string) => {
 };
 
 onMounted(() => {
-  // setTimeout(window.print, 3000);
-  // setTimeout(window.close, 5000);
+  setTimeout(window.print, 3000);
+  setTimeout(window.close, 5000);
 });
 onBeforeMount(() => {
   if (route.query.id == undefined) {

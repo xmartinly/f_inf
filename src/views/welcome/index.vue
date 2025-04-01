@@ -135,6 +135,7 @@ const recordNormalAction = (act_: ActionType, record?: any) => {
       break;
     case "cont":
       showContactDialog.value = true;
+      record.customer_name = record.customer.name_chs;
       currentContact.value = record as infTypes.ContactData;
       break;
     default:

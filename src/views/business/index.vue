@@ -46,6 +46,7 @@ onMounted(() => {
 const tableRowClass = () => {
   return "success-row";
 };
+
 const uploadSuccess = ({ data }: any) => {
   message(data.name + " 上传成功.", { type: "success" });
   fileList.value.push(data);
@@ -164,16 +165,34 @@ const search = () => {};
       </template>
       <el-table-column type="expand">
         <template #default="props">
-          <el-table
-            :data="props.row.order_items"
-            :row-class-name="tableRowClass"
+          <div
+            style="
+              text-align: center;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background-color: #f0f0f0;
+            "
           >
-            <el-table-column label="货号" prop="product.pn" />
-            <el-table-column label="描述" prop="product.descp" />
-            <el-table-column label="数量" prop="quantity" />
-            <el-table-column label="折扣" prop="discount" />
-            <el-table-column label="金额" prop="amount" />
-          </el-table>
+            <el-table
+              style="width: 65%"
+              size="small"
+              :border="true"
+              :data="props.row.order_items"
+              :header-cell-style="{
+                backgroundColor: '#2E598A',
+                borderRadius: '5px',
+                color: '#F1F1F1',
+                fontStyle: 'italic'
+              }"
+            >
+              <el-table-column label="货号" prop="product.pn" />
+              <el-table-column label="描述" prop="product.descp" />
+              <el-table-column label="数量" prop="quantity" />
+              <el-table-column label="折扣" prop="discount" />
+              <el-table-column label="金额" prop="amount" />
+            </el-table>
+          </div>
         </template>
       </el-table-column>
       <el-table-column
