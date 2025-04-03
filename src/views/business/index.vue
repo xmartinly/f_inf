@@ -43,10 +43,6 @@ onMounted(() => {
   });
 });
 
-const tableRowClass = () => {
-  return "success-row";
-};
-
 const uploadSuccess = ({ data }: any) => {
   message(data.name + " 上传成功.", { type: "success" });
   fileList.value.push(data);
@@ -121,7 +117,13 @@ const addRecord = () => {
   router.push({ name: "Contract" });
 };
 
-const search = () => {};
+const search = () => {
+  _request.appRequest("search", {}, keyword.value).then(({ data }) => {
+    console.log(data);
+    tableData.value = data.tableData;
+    tableInfo.value = data.props;
+  });
+};
 </script>
 
 <template>
