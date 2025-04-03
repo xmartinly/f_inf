@@ -88,7 +88,7 @@ export const fmtRateTextStyle = (rate: number): string => {
   return "";
 };
 
-export const itemHeader = (type: string) => {
+export const itemHeader = (type: string, is_shown = false) => {
   const comm_header = [
     {
       id: 0,
@@ -152,6 +152,9 @@ export const itemHeader = (type: string) => {
       element: "limit_price"
     }
   ];
+  if (is_shown) {
+    comm_header[1].sp = 9;
+  }
 
   let headers: any[] = [];
   switch (type) {

@@ -439,7 +439,7 @@ const onSubmit = () => {
             </el-divider>
             <el-row :gutter="10">
               <el-col
-                v-for="header in itemHeader('shown')"
+                v-for="header in itemHeader('shown', true)"
                 :key="header.id"
                 :span="header.sp"
                 :offset="header.off"
@@ -453,10 +453,10 @@ const onSubmit = () => {
               :gutter="10"
             >
               <template v-if="item.product_id">
-                <el-col :offset="0" :span="4">
+                <el-col :span="4" :offset="0">
                   <el-text>{{ item.product.pn }}</el-text>
                 </el-col>
-                <el-col :span="8" :offset="0">
+                <el-col :span="9" :offset="0">
                   <el-text>{{ item.product.descp }}</el-text>
                 </el-col>
                 <el-col :span="2" :offset="0">
@@ -466,7 +466,9 @@ const onSubmit = () => {
                   <el-text>{{ item.price_rounded }}</el-text>
                 </el-col>
                 <el-col :span="3" :offset="0"
-                  ><el-text>{{ item.amount }}</el-text></el-col
+                  ><el-text>{{
+                    (item.amount * 1.13).toFixed(2)
+                  }}</el-text></el-col
                 >
                 <el-col :span="3" :offset="0"
                   ><el-text
