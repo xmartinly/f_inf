@@ -185,7 +185,8 @@ const onSubmit = () => {
   _request
     .appRequest(action, form.value, form.value.id)
     .then(({ data, status }) => {
-      message(data.order_no + " 保存成功. 3秒后返回主页", { type: status });
+      let info = data.order_no ?? data.end_user;
+      message(info + " 保存成功. 3秒后返回主页", { type: status });
       setTimeout(goBack, 3000);
     });
 };
@@ -402,7 +403,6 @@ const onSubmit = () => {
               <el-col :span="6" :offset="0">
                 <el-text class="mx-1" tag="b"
                   >编号&nbsp;<el-button
-                    v-if="form.order_no == null || form.order_no == ''"
                     type="primary"
                     text
                     style="margin-top: -2px"
