@@ -37,10 +37,7 @@ const fileInfo = ref({
 });
 
 onMounted(() => {
-  _request.appRequest("index", {}, "").then(({ data }) => {
-    tableData.value = data.tableData;
-    tableInfo.value = data.props;
-  });
+  search();
 });
 
 const uploadSuccess = ({ data }: any) => {
@@ -118,8 +115,11 @@ const addRecord = () => {
 };
 
 const search = () => {
-  _request.appRequest("search", {}, keyword.value).then(({ data }) => {
-    console.log(data);
+  let type = "search";
+  if (keyword.value == "") {
+    type = "index";
+  }
+  _request.appRequest(type, {}, keyword.value).then(({ data }) => {
     tableData.value = data.tableData;
     tableInfo.value = data.props;
   });
@@ -131,21 +131,6 @@ const search = () => {
     <template v-slot:header>
       <div>
         <el-form :inline="true" @keyup.enter="search">
-          <el-form-item>
-            <el-select
-              v-model="search_type"
-              style="width: 140px"
-              placeholder="Search Type"
-            >
-              <el-option
-                v-for="item in bussOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-
           <el-form-item label="">
             <el-input
               v-model="keyword"
